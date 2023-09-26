@@ -15,11 +15,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.jakewharton.threetenabp.AndroidThreeTen
+import ru.sashel007.quitsmoking.dto.AppDatabase
 import ru.sashel007.quitsmoking.mainscreen.MainScreen
 import ru.sashel007.quitsmoking.navigator.CigarettesInPackPage
 import ru.sashel007.quitsmoking.navigator.CigarettesPerDayPage
@@ -31,8 +33,11 @@ import ru.sashel007.quitsmoking.navigator.StartingPage
 import ru.sashel007.quitsmoking.ui.theme.QuitSmokingTheme
 
 class MainActivity : ComponentActivity() {
+
+    private var dataBase: AppDatabase? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        dataBase = AppDatabase.getDatabase(this)
         AndroidThreeTen.init(this)
         setContent {
             QuitSmokingTheme {

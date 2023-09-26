@@ -8,5 +8,14 @@ class UserRepository(private val userDao: UserDao) {
     suspend fun insert(userData: UserData) {
         userDao.insert(userData)
     }
-    // ... other functions for update, delete, etc.
+
+    suspend fun update(userData: UserData) {
+        userDao.update(userData)
+    }
+
+    suspend fun delete(userData: UserData) {
+        userDao.delete(userData)
+    }
+
+    suspend fun getUserData(id: Int) = userDao.getUserData(id)
 }

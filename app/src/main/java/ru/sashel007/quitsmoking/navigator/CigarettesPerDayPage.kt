@@ -20,12 +20,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CigarettesPerDayPage(navController: NavController, function: () -> Unit) {
     var cigarettesCount by remember { mutableStateOf("0") }
+    val userViewModel: UserViewModel = viewModel()
+
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -48,10 +52,13 @@ fun CigarettesPerDayPage(navController: NavController, function: () -> Unit) {
             label = { Text("Cigarettes Count") }
         )
 
-
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = { navController.navigate("cigarettesInPackPage") }) {
+        Button(onClick = {
+            val updatedCigaretteCount = cigarettesCount.toInt()
+            userViewModel.updateCigarettesPerDay(updatedCigaretteCount)
+            navController.navigate("cigarettesInPackPage")
+        }) {
             Text(text = "Next")
         }
 
@@ -78,6 +85,7 @@ fun CigarettesPerDayPage(navController: NavController, function: () -> Unit) {
             // "<-" button to navigate back
             Button(
                 onClick = {
+
                     if (cigarettesCount.isNotEmpty()) {
                         cigarettesCount = cigarettesCount.dropLast(1)
                     }

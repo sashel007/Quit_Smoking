@@ -20,12 +20,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PackCostPage(navController: NavController, function: () -> Unit) {
     var packCost by remember { mutableStateOf("0") }
+    val userViewModel: UserViewModel = viewModel()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -50,7 +53,11 @@ fun PackCostPage(navController: NavController, function: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = { navController.navigate("firstMonthWithoutSmokingPage") }) {
+        Button(onClick = {
+            val cost = packCost.toDouble()
+            userViewModel.updatePackCost(cost)
+            navController.navigate("firstMonthWithoutSmokingPage")
+        }) {
             Text(text = "Next")
         }
 

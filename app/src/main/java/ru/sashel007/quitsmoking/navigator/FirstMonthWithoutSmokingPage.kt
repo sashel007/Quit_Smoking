@@ -11,6 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -40,11 +42,18 @@ fun FirstMonthWithoutSmokingPage(navController: NavController, function: () -> U
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.cigarette_smoked), // Replace with your image
-                        contentDescription = "Image 1"
+                        contentDescription = "Image 1",
+                        modifier = Modifier.weight(1f)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "Text 1")
-                    Text(text = "невыкуренных сигарет")
+                    Text(text = "Text 1", modifier = Modifier.weight(1f))
+                    Text(
+                        text = "невыкуренных сигарет",
+                        modifier = Modifier.weight(1f),
+                        fontSize = 14.sp, // или другой размер, который вам подходит
+                        textAlign = TextAlign.Center,
+                        lineHeight = 16.sp // или другой размер, который вам подходит
+                    )
                 }
             }
 
@@ -59,11 +68,18 @@ fun FirstMonthWithoutSmokingPage(navController: NavController, function: () -> U
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.rubble), // Replace with your image
-                        contentDescription = "Image 2"
+                        contentDescription = "Image 2",
+                        modifier = Modifier.weight(1f)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(text = "Text 2")
-                    Text(text = "Description 2")
+                    Text(
+                        text = "потрачено рублей",
+                        modifier = Modifier.weight(1f),
+                        fontSize = 14.sp, // или другой размер, который вам подходит
+                        textAlign = TextAlign.Center,
+                        lineHeight = 16.sp // или другой размер, который вам подходит
+                    )
                 }
             }
         }
