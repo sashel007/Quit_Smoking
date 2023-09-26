@@ -3,9 +3,7 @@ package ru.sashel007.quitsmoking.navigator
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.util.Log
-import android.widget.DatePicker
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,11 +15,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -35,12 +31,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
 import ru.sashel007.quitsmoking.R
+import ru.sashel007.quitsmoking.dto.AppDatabase
+import ru.sashel007.quitsmoking.dto.UserData
+import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 @Composable
@@ -166,7 +167,10 @@ fun QuitDateSelectionPage(navController: NavController, onContinueClicked: () ->
             Spacer(modifier = Modifier.height(90.dp))
 
             Button(
-                onClick = { onContinueClicked() },
+                onClick = {
+                    saveQuitDetails(quitDate.value, quitTime.value)
+                    onContinueClicked()
+                          },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(60.dp)
@@ -182,4 +186,25 @@ fun QuitDateSelectionPage(navController: NavController, onContinueClicked: () ->
         }
     }
 }
+fun saveQuitDetails(date: Date, timeInMinutes: Int) {
+    // Convert the Date to milliseconds (as it's a Long in UserData)
+    val userViewModel: UserViewModel = viewModel()
+    val quitDateInMillis = date.time
+
+    // Create the UserData object
+    val userData = UserData(
+        quitDate = quitDateInMillis,
+        quitTime = timeInMinutes,
+        cigarettesPerDay = 0,   // You will need to get these values from user input or set a default
+        cigarettesInPack = 0,  // You will need to get these values from user input or set a default
+        packCost = 0.0         // You will need to get these values from user input or set a default
+    )
+
+    // Use the ViewModel to insert the data
+    userViewModel.insert(userData)
+}
+
+
+
+
 
