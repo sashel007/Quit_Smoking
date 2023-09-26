@@ -1,5 +1,8 @@
 package ru.sashel007.quitsmoking.navigator
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import android.util.Log
 import android.widget.DatePicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,10 +40,17 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
 import ru.sashel007.quitsmoking.R
+import java.util.Calendar
 import java.util.Locale
 
 @Composable
 fun QuitDateSelectionPage(navController: NavController, onContinueClicked: () -> Unit) {
+
+    val quitDate = remember { mutableStateOf(Calendar.getInstance().time) } // Default to the current date
+    val quitTime = remember { mutableStateOf(0) }  // Initialize with some default value
+
+    val context = LocalContext.current
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -92,7 +103,20 @@ fun QuitDateSelectionPage(navController: NavController, onContinueClicked: () ->
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Button(
-                    onClick = { /* Open Date Picker */ },
+                    onClick = {
+                        val calendar = Calendar.getInstance()
+                        DatePickerDialog(
+                            context, // Your activity or fragment's context
+                            { _, year, month, dayOfMonth ->
+                                calendar.set(year, month, dayOfMonth)
+                                quitDate.value = calendar.time
+                                Log.d("DatePicker", "Selected date: ${quitDate.value}")
+                            },
+                            calendar.get(Calendar.YEAR),
+                            calendar.get(Calendar.MONTH),
+                            calendar.get(Calendar.DAY_OF_MONTH)
+                        ).show()
+                    },
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Transparent,
@@ -103,7 +127,21 @@ fun QuitDateSelectionPage(navController: NavController, onContinueClicked: () ->
                     Text(text = "Выбрать дату", color = Color(0xFF590D82))
                 }
                 Button(
-                    onClick = { /* Open Time Picker */ },
+                    onClick = {
+                        val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+                        val currentMinute = Calendar.getInstance().get(Calendar.MINUTE)
+
+                        TimePickerDialog(
+                            context,  // Your activity or fragment's context
+                            TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+                                quitTime.value = hourOfDay * 60 + minute
+                                Log.d("TimePicker", "Selected time: $hourOfDay:$minute, Total minutes since midnight: ${quitTime.value}")
+                            },
+                            currentHour,
+                            currentMinute,
+                            true  // Use 24-hour format or false for 12-hour format
+                        ).show()
+                              },
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Transparent,
