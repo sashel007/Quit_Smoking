@@ -27,7 +27,7 @@ fun PageIndicator(currentPage: Int, numberOfPages: Int, modifier: Modifier = Mod
             Box(
                 modifier = Modifier.size(8.dp)
                     .background(
-                        if (i == currentPage) Color.White else Color.Gray,
+                        if (i == currentPage) Color.Black else Color.Gray,
                         shape = CircleShape
                     )
             )
