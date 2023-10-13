@@ -18,4 +18,5 @@ class UserRepository(private val userDao: UserDao) {
     }
 
     suspend fun getUserData(id: Int) = userDao.getUserData(id)
+
 }
