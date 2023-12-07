@@ -26,7 +26,7 @@ import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PackCostPage(navController: NavController, function: () -> Unit) {
+fun PackCostPage(function: () -> Unit) {
     var packCost by remember { mutableStateOf("0") }
     val userViewModel: UserViewModel = viewModel()
 
@@ -54,9 +54,9 @@ fun PackCostPage(navController: NavController, function: () -> Unit) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(onClick = {
-            val cost = packCost.toDouble()
+            val cost = packCost.toInt()
             userViewModel.updatePackCost(cost)
-            navController.navigate("firstMonthWithoutSmokingPage")
+            function()
         }) {
             Text(text = "Next")
         }

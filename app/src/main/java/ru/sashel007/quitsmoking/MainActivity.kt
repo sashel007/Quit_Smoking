@@ -1,6 +1,7 @@
 package ru.sashel007.quitsmoking
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
@@ -8,44 +9,64 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.jakewharton.threetenabp.AndroidThreeTen
+import kotlinx.coroutines.launch
 import ru.sashel007.quitsmoking.dto.AppDatabase
+import ru.sashel007.quitsmoking.dto.UserDao
 import ru.sashel007.quitsmoking.mainscreen.MainScreen
 import ru.sashel007.quitsmoking.navigator.CigarettesInPackPage
 import ru.sashel007.quitsmoking.navigator.CigarettesPerDayPage
 import ru.sashel007.quitsmoking.navigator.FirstMonthWithoutSmokingPage
 import ru.sashel007.quitsmoking.navigator.NotificationsPage
+import ru.sashel007.quitsmoking.navigator.PackCostPage
 import ru.sashel007.quitsmoking.navigator.PageIndicator
 import ru.sashel007.quitsmoking.navigator.QuitDateSelectionPage
 import ru.sashel007.quitsmoking.navigator.StartingPage
 import ru.sashel007.quitsmoking.ui.theme.QuitSmokingTheme
+import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 
 class MainActivity : ComponentActivity() {
 
     private var dataBase: AppDatabase? = null
+    private lateinit var userDao: UserDao
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dataBase = AppDatabase.getDatabase(this)
+        userDao = dataBase!!.userDao()
         AndroidThreeTen.init(this)
+
         setContent {
             QuitSmokingTheme {
+                val userViewModel: UserViewModel = viewModel()
+
+                LaunchedEffect(key1 = Unit) {
+                    userViewModel.allUserData.observeForever { userDataList ->
+                        userDataList.forEach { userData ->
+                            Log.d("DatabaseData", userData.toString())
+                        }
+                    }
+                }
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = Color(0xFFCCCCFF)
                 ) {
-                    AppNavigator()
+                    AppNavigator(userViewModel)
                 }
             }
         }
@@ -53,9 +74,9 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun AppNavigator() {
+fun AppNavigator(userViewModel: UserViewModel) {
     val navController = rememberNavController()
-    var currentPage by remember { mutableStateOf(0) }
+    var currentPage by remember { mutableIntStateOf(0) }
 
     DisposableEffect(navController) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
@@ -80,40 +101,37 @@ fun AppNavigator() {
     Box(modifier = Modifier.fillMaxSize()) {
         NavHost(navController = navController, startDestination = "startingPage") {
             composable("startingPage") {
-                StartingPage(navController) {
+                StartingPage {
                     navController.navigate("quitDateSelectionPage")
                 }
             }
             composable("quitDateSelectionPage") {
-                QuitDateSelectionPage(navController) {
-                    // Navigate to CigarettesPerDayPage after "Дальше" is clicked
+                QuitDateSelectionPage(userViewModel) {
                     navController.navigate("cigarettesPerDayPage")
                 }
             }
             composable("cigarettesPerDayPage") {
-                CigarettesPerDayPage(navController) {
-                    // Example: Navigate back to quitDateSelectionPage when "<-" is clicked.
-                    // Adjust based on your requirements.
+                CigarettesPerDayPage {
                     navController.navigate("cigarettesInPackPage")
                 }
             }
             composable("cigarettesInPackPage") {
-                CigarettesInPackPage(navController = navController) {
+                CigarettesInPackPage {
                     navController.navigate("packCostPage")
                 }
             }
             composable("packCostPage") {
-                ru.sashel007.quitsmoking.navigator.PackCostPage(navController = navController) {
+                PackCostPage {
                     navController.navigate("firstMonthWithoutSmokingPage")
                 }
             }
             composable("firstMonthWithoutSmokingPage") {
-                FirstMonthWithoutSmokingPage(navController = navController) {
+                FirstMonthWithoutSmokingPage {
                     navController.navigate("notificationsPage")
                 }
             }
             composable("notificationsPage") {
-                NotificationsPage(navController = navController) {
+                NotificationsPage {
                     navController.navigate("mainScreen")
                 }
             }

@@ -20,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -31,7 +32,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
@@ -45,11 +45,10 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun QuitDateSelectionPage(navController: NavController, onContinueClicked: () -> Unit) {
+fun QuitDateSelectionPage(viewModel: UserViewModel, onEvent: () -> Unit) {
 
     val quitDate = remember { mutableStateOf(Calendar.getInstance().time) } // Default to the current date
-    val quitTime = remember { mutableStateOf(0) }  // Initialize with some default value
-    val userViewModel: UserViewModel = viewModel()
+    val quitTime = remember { mutableIntStateOf(0) }  // Initialize with some default value
 
     val context = LocalContext.current
 
@@ -169,9 +168,9 @@ fun QuitDateSelectionPage(navController: NavController, onContinueClicked: () ->
 
             Button(
                 onClick = {
-                    userViewModel.saveQuitDetails(quitDate.value, quitTime.value)
-                    onContinueClicked()
-                          },
+                    saveQuitDetails(viewModel, quitDate.value, quitTime.intValue)
+                    onEvent()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(60.dp)
@@ -191,20 +190,7 @@ fun saveQuitDetails(userViewModel: UserViewModel, date: Date, timeInMinutes: Int
     // Convert the Date to milliseconds (as it's a Long in UserData)
     val quitDateInMillis = date.time
 
-    // Create the UserData object
-    val userData = UserData(
-        quitDate = quitDateInMillis,
-        quitTime = timeInMinutes,
-        cigarettesPerDay = 0,   // You will need to get these values from user input or set a default
-        cigarettesInPack = 0,  // You will need to get these values from user input or set a default
-        packCost = 0.0         // You will need to get these values from user input or set a default
-    )
-
-    // Use the ViewModel to insert the data
-    userViewModel.insert(userData)
+    // Call the ViewModel to update the quit date and time
+    userViewModel.updateQuitDate(quitDateInMillis)
+    userViewModel.updateQuitTime(timeInMinutes)
 }
-
-
-
-
-

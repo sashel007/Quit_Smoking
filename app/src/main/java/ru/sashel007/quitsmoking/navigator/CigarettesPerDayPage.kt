@@ -1,5 +1,6 @@
 package ru.sashel007.quitsmoking.navigator
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,15 +27,15 @@ import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CigarettesPerDayPage(navController: NavController, function: () -> Unit) {
+fun CigarettesPerDayPage(function: () -> Unit) {
     var cigarettesCount by remember { mutableStateOf("0") }
     val userViewModel: UserViewModel = viewModel()
-
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize().padding(16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
         Text(text = "сколько сигарет вы выкуривали за день")
 
@@ -43,21 +44,26 @@ fun CigarettesPerDayPage(navController: NavController, function: () -> Unit) {
         TextField(
             value = cigarettesCount,
             onValueChange = { newValue ->
-                cigarettesCount = if (cigarettesCount == "0") {
-                    newValue
-                } else {
-                    cigarettesCount + newValue
-                }
+                cigarettesCount = newValue
             },
-            label = { Text("Cigarettes Count") }
+            label = { Text("cigarettesCount") }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(onClick = {
-            val updatedCigaretteCount = cigarettesCount.toInt()
-            userViewModel.updateCigarettesPerDay(updatedCigaretteCount)
-            navController.navigate("cigarettesInPackPage")
+            try {
+                val updatedCigaretteCount = cigarettesCount.toInt()
+                Log.d(
+                    "CigarettesPage",
+                    "Calling updateCigarettesPerDay with count: $updatedCigaretteCount"
+                )
+                userViewModel.updateCigarettesPerDay(updatedCigaretteCount)
+                function()
+            } catch (e: NumberFormatException) {
+                Log.e("CigarettesPage", "Invalid number format", e)
+                // Показать ошибку пользователю
+            }
         }) {
             Text(text = "Next")
         }
@@ -74,7 +80,13 @@ fun CigarettesPerDayPage(navController: NavController, function: () -> Unit) {
                     row.forEach { number ->
                         Button(
                             modifier = Modifier.weight(1f, fill = true),
-                            onClick = { cigarettesCount += number.toString() }
+                            onClick = {
+                                if (cigarettesCount == "0") {
+                                    cigarettesCount = number.toString()
+                                } else {
+                                    cigarettesCount += number.toString()
+                                }
+                            }
                         ) {
                             Text(text = number.toString())
                         }

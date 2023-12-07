@@ -14,7 +14,7 @@ import androidx.navigation.NavController
 import ru.sashel007.quitsmoking.R
 
 @Composable
-fun NotificationsPage(navController: NavController, function: () -> Unit) {
+fun NotificationsPage(function: () -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -54,7 +54,7 @@ fun NotificationsPage(navController: NavController, function: () -> Unit) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { navController.navigate("mainScreen") },
+            onClick = { function() },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
         ) {
             Text(text = "Может, позже")

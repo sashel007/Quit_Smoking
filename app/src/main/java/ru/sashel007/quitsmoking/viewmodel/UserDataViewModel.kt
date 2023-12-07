@@ -1,15 +1,15 @@
 package ru.sashel007.quitsmoking.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.sashel007.quitsmoking.dto.AppDatabase
+import ru.sashel007.quitsmoking.dto.UserDao
 import ru.sashel007.quitsmoking.dto.UserData
 import ru.sashel007.quitsmoking.dto.UserRepository
-import java.util.Date
 
 class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: UserRepository
@@ -20,13 +20,11 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     val userData: LiveData<UserData> = repository.userData
+    val userId = 1
+    val allUserData: LiveData<List<UserData>> = repository.getAllUserData()
 
     fun insert(userData: UserData) = viewModelScope.launch {
         repository.insert(userData)
-    }
-
-    fun update(userData: UserData) = viewModelScope.launch {
-        repository.update(userData)
     }
 
     fun delete(userData: UserData) = viewModelScope.launch {
@@ -37,36 +35,46 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         repository.getUserData(id)
     }
 
-    fun saveQuitDetails(date: Date, timeInMinutes: Int) = viewModelScope.launch {
-        val quitDateInMillis = date.time
-        val userData = UserData(
-            quitDate = quitDateInMillis,
-            quitTime = timeInMinutes,
-            cigarettesPerDay = 0,   // По умолчанию 0, пока пользователь не введет значение на следующем экране
-            cigarettesInPack = 0,  // Аналогично
-            packCost = 0.0         // Аналогично
-        )
-        repository.insert(userData)
+    fun updateQuitDate(quitDate: Long) {
+        viewModelScope.launch {
+            repository.updateQuitDate(userId, quitDate)
+        }
     }
 
-    fun updateCigarettesPerDay(count: Int) = viewModelScope.launch {
-        val currentData = userData.value ?: return@launch // Если данных нет, просто вернитесь
-        val updatedData = currentData.copy(cigarettesPerDay = count)
-        repository.update(updatedData)
+    fun updateQuitTime(quitTime: Int) {
+        viewModelScope.launch {
+            repository.updateQuitTime(userId, quitTime)
+        }
     }
 
-    fun updateCigarettesInPack(count: Int) = viewModelScope.launch {
-        val currentData = userData.value ?: return@launch
-        val updatedData = currentData.copy(cigarettesInPack = count)
-        repository.update(updatedData)
+    fun updateCigarettesPerDay(cigarettesPerDay: Int) {
+        Log.d("UserViewModel", "Updating cigarettesPerDay to $cigarettesPerDay")
+        viewModelScope.launch {
+            repository.updateCigarettesPerDay(userId, cigarettesPerDay)
+        }
     }
 
-    fun updatePackCost(cost: Double) = viewModelScope.launch {
-        val currentData = userData.value ?: return@launch
-        val updatedData = currentData.copy(packCost = cost)
-        repository.update(updatedData)
+    fun updateCigarettesInPack(cigarettesInPack: Int) {
+        viewModelScope.launch {
+            repository.updateCigarettesInPack(userId, cigarettesInPack)
+        }
     }
 
+    fun updatePackCost(packCost: Int) {
+        viewModelScope.launch {
+            repository.updatePackCost(userId, packCost)
+        }
+    }
 
+    fun fetchAllUserData(): LiveData<List<UserData>> {
+        return repository.getAllUserData()
+    }
+
+//    fun refreshUserData() = viewModelScope.launch {
+//        val updatedUserData = repository.getUserByIdAsync(userId)
+//        // Теперь обновляем LiveData
+//        if (updatedUserData != null) {
+//            _userData.value = updatedUserData
+//        }
+//    }
 }
-

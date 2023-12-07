@@ -1,5 +1,6 @@
 package ru.sashel007.quitsmoking.navigator
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -7,6 +8,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,11 +18,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ru.sashel007.quitsmoking.R
+import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 
 @Composable
-fun FirstMonthWithoutSmokingPage(navController: NavController, function: () -> Unit) {
+fun FirstMonthWithoutSmokingPage(function: () -> Unit) {
+    val userViewModel: UserViewModel = viewModel()
+    val currentUserData by userViewModel.userData.observeAsState()
+    val cigarettesCount = currentUserData?.cigarettesPerDay ?: 0
+    val packCost = currentUserData?.packCost ?: 0
+    Log.d("FirstMonthWithoutSmokingPage", "$cigarettesCount + $currentUserData")
+    val nonSmokedCigarettes = cigarettesCount * 30
+    val cigarettesInPack = 20
+    val daysInMonth = 30
+    val monthMoneySpent = packCost / cigarettesInPack * nonSmokedCigarettes * daysInMonth
+    Log.d("FirstMonthWithoutSmokingPage", "$monthMoneySpent")
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -46,7 +62,7 @@ fun FirstMonthWithoutSmokingPage(navController: NavController, function: () -> U
                         modifier = Modifier.weight(1f)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "Text 1", modifier = Modifier.weight(1f))
+                    Text(text = "$nonSmokedCigarettes", modifier = Modifier.weight(1f))
                     Text(
                         text = "невыкуренных сигарет",
                         modifier = Modifier.weight(1f),
@@ -72,7 +88,7 @@ fun FirstMonthWithoutSmokingPage(navController: NavController, function: () -> U
                         modifier = Modifier.weight(1f)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "Text 2")
+                    Text(text = "$monthMoneySpent")
                     Text(
                         text = "потрачено рублей",
                         modifier = Modifier.weight(1f),
@@ -89,7 +105,7 @@ fun FirstMonthWithoutSmokingPage(navController: NavController, function: () -> U
         Text(text = "по данный ВОЗ улучшатся 4 разных аспекта вашего тела", fontSize = 18.sp)
 
         Button(
-            onClick = { navController.navigate("NotificationsPage") },
+            onClick = { function() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(60.dp)

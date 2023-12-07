@@ -26,7 +26,7 @@ import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CigarettesInPackPage(navController: NavController, onNextClicked: () -> Unit) {
+fun CigarettesInPackPage(onNextClicked: () -> Unit) {
     var cigarettesInPack by remember { mutableStateOf("0") }
     val userViewModel: UserViewModel = viewModel()
 

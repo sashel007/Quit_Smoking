@@ -22,7 +22,7 @@ import ru.sashel007.quitsmoking.R
 
 
 @Composable
-fun StartingPage(navController: NavController, onClickAction: () -> Unit) {
+fun StartingPage(onClickAction: () -> Unit) {
     val customColor = Color(0xFFDAC6F1)
 
     Box(
@@ -58,7 +58,7 @@ fun StartingPage(navController: NavController, onClickAction: () -> Unit) {
 
             Button(
                 onClick = {
-                    navController.navigate("quitDateSelectionPage")
+                    onClickAction()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -76,7 +76,7 @@ fun StartingPage(navController: NavController, onClickAction: () -> Unit) {
 
             Button(
                 onClick = {
-                    navController.navigate("quitDateSelectionPage")
+                    onClickAction()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
