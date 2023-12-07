@@ -34,7 +34,6 @@ fun FirstMonthWithoutSmokingPage(function: () -> Unit) {
     val cigarettesInPack = 20
     val daysInMonth = 30
     val monthMoneySpent = packCost / cigarettesInPack * nonSmokedCigarettes * daysInMonth
-    Log.d("FirstMonthWithoutSmokingPage", "$monthMoneySpent")
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
