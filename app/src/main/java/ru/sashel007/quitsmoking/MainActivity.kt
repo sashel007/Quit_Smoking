@@ -12,22 +12,19 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.jakewharton.threetenabp.AndroidThreeTen
-import kotlinx.coroutines.launch
-import ru.sashel007.quitsmoking.dto.AppDatabase
-import ru.sashel007.quitsmoking.dto.UserDao
+import ru.sashel007.quitsmoking.dto.user.AppDatabase
+import ru.sashel007.quitsmoking.dto.user.UserDao
 import ru.sashel007.quitsmoking.mainscreen.MainScreen
 import ru.sashel007.quitsmoking.navigator.CigarettesInPackPage
 import ru.sashel007.quitsmoking.navigator.CigarettesPerDayPage
@@ -64,7 +61,7 @@ class MainActivity : ComponentActivity() {
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = Color(0xFFCCCCFF)
+                    color = Color.White
                 ) {
                     AppNavigator(userViewModel)
                 }

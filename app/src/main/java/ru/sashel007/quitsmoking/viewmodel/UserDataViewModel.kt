@@ -6,10 +6,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import ru.sashel007.quitsmoking.dto.AppDatabase
-import ru.sashel007.quitsmoking.dto.UserDao
-import ru.sashel007.quitsmoking.dto.UserData
-import ru.sashel007.quitsmoking.dto.UserRepository
+import ru.sashel007.quitsmoking.dto.user.AppDatabase
+import ru.sashel007.quitsmoking.dto.user.UserData
+import ru.sashel007.quitsmoking.dto.user.UserRepository
 
 class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: UserRepository

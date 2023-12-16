@@ -64,6 +64,8 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation ("androidx.navigation:navigation-compose:2.7.4")
     implementation ("com.jakewharton.threetenabp:threetenabp:1.3.1")
+    implementation ("com.google.accompanist:accompanist-pager:0.27.1")
+
 
     // Room
     implementation("androidx.room:room-runtime:2.6.0")

@@ -33,17 +33,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
 import ru.sashel007.quitsmoking.R
-import ru.sashel007.quitsmoking.dto.AppDatabase
-import ru.sashel007.quitsmoking.dto.UserData
 import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 import java.util.Calendar
 import java.util.Date
-import java.util.Calendar
 import java.util.Locale
 
 @Composable

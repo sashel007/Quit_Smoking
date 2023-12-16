@@ -1,10 +1,8 @@
-package ru.sashel007.quitsmoking.dto
+package ru.sashel007.quitsmoking.dto.user
 
-import android.content.ContentValues
 import android.content.Context
 import android.util.Log
 import androidx.room.Database
-import androidx.room.OnConflictStrategy
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -38,14 +36,16 @@ abstract class AppDatabase : RoomDatabase() {
                                 Log.d("AppDatabase", "Coroutine started for initializing data")
                                 // Получаем DAO и выполняем вставку данных
                                 val userDao = INSTANCE?.userDao()
-                                userDao?.insert(UserData(
+                                userDao?.insert(
+                                    UserData(
                                     // Так как ID автогенерируется, мы не указываем его
                                     quitDate = System.currentTimeMillis(),
                                     quitTime = 0,
                                     cigarettesPerDay = 0,
                                     cigarettesInPack = 0,
                                     packCost = 0
-                                ))
+                                )
+                                )
                                 Log.d("AppDatabase", "Initial data inserted")
                             }
                         }

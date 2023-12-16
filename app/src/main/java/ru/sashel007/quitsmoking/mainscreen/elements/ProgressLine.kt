@@ -42,8 +42,7 @@ fun ProgressLine(modifier: Modifier = Modifier.padding(bottom = 20.dp)) {
             .background(Color.White)
     ) {
         BlockText()
-        Row()
-        {
+        Row() {
             DaysPassed(
                 Modifier
                     .weight(1f)

@@ -1,4 +1,4 @@
-package ru.sashel007.quitsmoking.dto
+package ru.sashel007.quitsmoking.dto.user
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
