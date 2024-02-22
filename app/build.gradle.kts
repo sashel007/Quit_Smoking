@@ -62,7 +62,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
-    implementation ("androidx.navigation:navigation-compose:2.7.4")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation ("com.jakewharton.threetenabp:threetenabp:1.3.1")
     implementation ("com.google.accompanist:accompanist-pager:0.27.1")
 

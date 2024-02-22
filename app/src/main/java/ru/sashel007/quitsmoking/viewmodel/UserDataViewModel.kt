@@ -19,7 +19,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     val userData: LiveData<UserData> = repository.userData
-    val userId = 1
+    private val userId = 1
     val allUserData: LiveData<List<UserData>> = repository.getAllUserData()
 
     fun insert(userData: UserData) = viewModelScope.launch {

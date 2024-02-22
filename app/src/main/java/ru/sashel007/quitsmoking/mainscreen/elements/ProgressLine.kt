@@ -37,8 +37,8 @@ fun ProgressLine(modifier: Modifier = Modifier.padding(bottom = 20.dp)) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .shadow(5.dp, RoundedCornerShape(6.dp))
-            .clip(RoundedCornerShape(6.dp))
+            .shadow(5.dp, RoundedCornerShape(26.dp))
+            .clip(RoundedCornerShape(26.dp))
             .background(Color.White)
     ) {
         BlockText()

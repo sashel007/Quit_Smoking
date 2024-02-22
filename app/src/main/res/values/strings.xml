@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Quit Smoking</string>
     <string name="settings">Настройки</string>
+    <string name="back_button">Кнопка \"Назад\"</string>
 </resources>

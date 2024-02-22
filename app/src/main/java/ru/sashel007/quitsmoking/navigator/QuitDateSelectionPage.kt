@@ -3,7 +3,8 @@ package ru.sashel007.quitsmoking.navigator
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.util.Log
-import android.widget.DatePicker
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -33,21 +34,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
 import ru.sashel007.quitsmoking.R
+import ru.sashel007.quitsmoking.ui.theme.BackButtonImage
 import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
 @Composable
-fun QuitDateSelectionPage(viewModel: UserViewModel, onEvent: () -> Unit) {
-
-    val quitDate = remember { mutableStateOf(Calendar.getInstance().time) } // Default to the current date
+fun QuitDateSelectionPage(
+    viewModel: UserViewModel,
+    onClickForward: () -> Unit,
+    navController: NavController,
+) {
+    val quitDate =
+        remember { mutableStateOf(Calendar.getInstance().time) } // Default to the current date
     val quitTime = remember { mutableIntStateOf(0) }  // Initialize with some default value
-
     val context = LocalContext.current
 
     Box(
@@ -55,19 +61,26 @@ fun QuitDateSelectionPage(viewModel: UserViewModel, onEvent: () -> Unit) {
         contentAlignment = Alignment.Center
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
+//            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.padding(10.dp)
         ) {
+
+            BackButtonImage(
+                navController = navController
+            )
+
             Box(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(top = 70.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 40.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
                 Text(
                     text = "Когда вы бросили курить?",
                     fontWeight = FontWeight.Bold,
                     fontSize = 33.sp,
+                    lineHeight = 28.sp,
                     modifier = Modifier.padding(vertical = 8.dp),
                     textAlign = TextAlign.Center,
                     color = Color(0xFF590D82)
@@ -83,19 +96,29 @@ fun QuitDateSelectionPage(viewModel: UserViewModel, onEvent: () -> Unit) {
                 color = Color(0xFF590D82)
             )
 
-            // Display current date and time in the desired format
-            val currentDate = LocalDate.now()
-            val currentTime = LocalTime.now()
-            val russianLocale = Locale("ru")
-            val dateFormatter = DateTimeFormatter.ofPattern("dd MMMM",russianLocale)
-            val timeFormatter = DateTimeFormatter.ofPattern("HH:mm",russianLocale)
-            Text(
-                text = "${currentDate.format(dateFormatter)} в ${currentTime.format(timeFormatter)}",
-                modifier = Modifier.padding(vertical = 8.dp),
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF590D82)
-            )
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                // Display current date and time in the desired format
+                val currentDate = LocalDate.now()
+                val currentTime = LocalTime.now()
+                val russianLocale = Locale("ru")
+                val dateFormatter = DateTimeFormatter.ofPattern("dd MMMM", russianLocale)
+                val timeFormatter = DateTimeFormatter.ofPattern("HH:mm", russianLocale)
+                Text(
+                    text = "${currentDate.format(dateFormatter)} в ${
+                        currentTime.format(
+                            timeFormatter
+                        )
+                    }",
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF590D82),
+                    textAlign = TextAlign.Center,
+                )
+            }
 
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -134,13 +157,16 @@ fun QuitDateSelectionPage(viewModel: UserViewModel, onEvent: () -> Unit) {
                             context,  // Your activity or fragment's context
                             TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
                                 quitTime.value = hourOfDay * 60 + minute
-                                Log.d("TimePicker", "Selected time: $hourOfDay:$minute, Total minutes since midnight: ${quitTime.value}")
+                                Log.d(
+                                    "TimePicker",
+                                    "Selected time: $hourOfDay:$minute, Total minutes since midnight: ${quitTime.value}"
+                                )
                             },
                             currentHour,
                             currentMinute,
                             true  // Use 24-hour format or false for 12-hour format
                         ).show()
-                              },
+                    },
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Transparent,
@@ -154,20 +180,25 @@ fun QuitDateSelectionPage(viewModel: UserViewModel, onEvent: () -> Unit) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Dummy Image for now, replace with your desired image
-            Image(
-                modifier = Modifier
-                    .size(120.dp),
-                painter = painterResource(id = R.drawable.calendar_second),
-                contentDescription = "Your Image Description",
+            Box(
+                contentAlignment = Alignment.TopCenter,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Image(
+                    modifier = Modifier
+                        .size(120.dp),
+                    painter = painterResource(id = R.drawable.calendar_second),
+                    contentDescription = "Your Image Description",
                 )
+            }
+
 
             Spacer(modifier = Modifier.height(90.dp))
 
             Button(
                 onClick = {
                     saveQuitDetails(viewModel, quitDate.value, quitTime.intValue)
-                    onEvent()
+                    onClickForward()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -184,6 +215,7 @@ fun QuitDateSelectionPage(viewModel: UserViewModel, onEvent: () -> Unit) {
         }
     }
 }
+
 fun saveQuitDetails(userViewModel: UserViewModel, date: Date, timeInMinutes: Int) {
     // Convert the Date to milliseconds (as it's a Long in UserData)
     val quitDateInMillis = date.time

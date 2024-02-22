@@ -4,6 +4,16 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
@@ -96,43 +106,52 @@ fun AppNavigator(userViewModel: UserViewModel) {
 
 
     Box(modifier = Modifier.fillMaxSize()) {
-        NavHost(navController = navController, startDestination = "startingPage") {
-            composable("startingPage") {
+        NavHost(
+            navController = navController,
+            startDestination = "startingPage",
+            enterTransition = { forwardTransitionAnimation() },
+            exitTransition = { backwardTransitionAnimation() },
+            popEnterTransition = { popForwardTransitionAnimation() },
+            popExitTransition = { popBackwardTransitionAnimation() }
+        ) {
+            composable(route = "startingPage") {
                 StartingPage {
                     navController.navigate("quitDateSelectionPage")
                 }
             }
-            composable("quitDateSelectionPage") {
-                QuitDateSelectionPage(userViewModel) {
-                    navController.navigate("cigarettesPerDayPage")
-                }
+            composable(route = "quitDateSelectionPage") {
+                QuitDateSelectionPage(
+                    viewModel = userViewModel,
+                    onClickForward = { navController.navigate("cigarettesPerDayPage") },
+                    navController = navController,
+                )
             }
-            composable("cigarettesPerDayPage") {
+            composable(route = "cigarettesPerDayPage") {
                 CigarettesPerDayPage {
                     navController.navigate("cigarettesInPackPage")
                 }
             }
-            composable("cigarettesInPackPage") {
+            composable(route = "cigarettesInPackPage") {
                 CigarettesInPackPage {
                     navController.navigate("packCostPage")
                 }
             }
-            composable("packCostPage") {
+            composable(route = "packCostPage") {
                 PackCostPage {
                     navController.navigate("firstMonthWithoutSmokingPage")
                 }
             }
-            composable("firstMonthWithoutSmokingPage") {
+            composable(route = "firstMonthWithoutSmokingPage") {
                 FirstMonthWithoutSmokingPage {
                     navController.navigate("notificationsPage")
                 }
             }
-            composable("notificationsPage") {
+            composable(route = "notificationsPage") {
                 NotificationsPage {
                     navController.navigate("mainScreen")
                 }
             }
-            composable("mainScreen") {
+            composable(route = "mainScreen") {
                 MainScreen()
             }
         }
@@ -144,4 +163,40 @@ fun AppNavigator(userViewModel: UserViewModel) {
             )
         }
     }
+}
+
+fun forwardTransitionAnimation(): EnterTransition {
+    return fadeIn(
+        animationSpec = tween(300, easing = LinearEasing)
+    ) + slideInHorizontally(
+        animationSpec = tween(300, easing = EaseIn),
+        initialOffsetX = { fullWidth -> fullWidth / 2 }
+    )
+}
+
+fun backwardTransitionAnimation(): ExitTransition {
+    return fadeOut(
+        animationSpec = tween(300, easing = LinearEasing)
+    ) + slideOutHorizontally(
+        animationSpec = tween(300, easing = EaseOut),
+        targetOffsetX = { fullWidth -> -fullWidth / 2 }
+    )
+}
+
+// Анимация для popEnterTransition
+fun popForwardTransitionAnimation(): EnterTransition {
+    return fadeIn(animationSpec = tween(300, easing = LinearEasing)) +
+            slideInHorizontally(
+                animationSpec = tween(300, easing = EaseIn),
+                initialOffsetX = { fullWidth -> -fullWidth }
+            )
+}
+
+// Анимация для popExitTransition
+fun popBackwardTransitionAnimation(): ExitTransition {
+    return fadeOut(animationSpec = tween(300, easing = LinearEasing)) +
+            slideOutHorizontally(
+                animationSpec = tween(300, easing = EaseOut),
+                targetOffsetX = { fullWidth -> fullWidth }
+            )
 }

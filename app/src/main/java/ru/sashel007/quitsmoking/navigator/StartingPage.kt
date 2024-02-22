@@ -73,27 +73,27 @@ fun StartingPage(onClickAction: () -> Unit) {
             }
 
             Spacer(modifier = Modifier.height(8.dp)) // Adjust spacing as per your requirements
-
-            Button(
-                onClick = {
-                    onClickAction()
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .padding(horizontal = 16.dp),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = customColor,
-                        contentColor = Color.White
-                    )
-            ) {
-                Text(
-                    text = "Войти",
-                    fontSize = 20.sp,
-                    color = Color.Black
-                )
-            }
+//
+//            Button(
+//                onClick = {
+//                    onClickAction()
+//                },
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(56.dp)
+//                    .padding(horizontal = 16.dp),
+//                    shape = RoundedCornerShape(8.dp),
+//                    colors = ButtonDefaults.buttonColors(
+//                        containerColor = customColor,
+//                        contentColor = Color.White
+//                    )
+//            ) {
+//                Text(
+//                    text = "Войти",
+//                    fontSize = 20.sp,
+//                    color = Color.Black
+//                )
+//            }
         }
     }
 }
