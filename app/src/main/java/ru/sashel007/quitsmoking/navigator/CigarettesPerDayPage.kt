@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,42 +42,39 @@ import ru.sashel007.quitsmoking.mainscreen.elements.MyCustomTextField
 import ru.sashel007.quitsmoking.ui.theme.MyTextStyles
 import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 
-/**
-Сколько сигарет вы выкуриваете за день?
- */
+/** PAGE: Сколько сигарет вы выкуриваете за день? */
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CigarettesPerDayPage(
     navController: NavController,
     onClickForward: () -> Unit
 ) {
-    var cigarettesCount by remember { mutableStateOf("0") }
+    var cigarettesCount by remember { mutableStateOf("") }
     val userViewModel: UserViewModel = viewModel()
+
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .border(BorderStroke(2.dp, Color.Green)),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.TopCenter,
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-//            verticalArrangement = Arrangement.Top,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(24.dp)
         ) {
+
             /**  Стрелка "НАЗАД" */
+
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(BorderStroke(2.dp, Color.Blue)),
+                modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.CenterStart
             ) {
                 BackButtonImage(navController = navController)
             }
 
             Spacer(modifier = Modifier.height(34.dp))
+
+            /** КАРТИНКА */
 
             Box(
                 contentAlignment = Alignment.TopCenter,
@@ -91,6 +87,8 @@ fun CigarettesPerDayPage(
                     contentDescription = "Your Image Description",
                 )
             }
+
+            /** "Cколько сигарет вы выкуривали" */
 
             Text(
                 textAlign = TextAlign.Center,
@@ -109,13 +107,6 @@ fun CigarettesPerDayPage(
                 },
                 label = { Text(stringResource(id = R.string.cigarettes_amount)) }
             )
-//            OutlinedTextField(
-//                value = cigarettesCount,
-//                onValueChange = { newValue ->
-//                    cigarettesCount = newValue
-//                },
-//                label = { Text(stringResource(id = R.string.cigarettes_amount)) }
-//            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -136,7 +127,11 @@ fun CigarettesPerDayPage(
                     .fillMaxWidth()
                     .height(60.dp)
                     .padding(start = 2.dp, top = 5.dp, end = 2.dp, bottom = 2.dp),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
+                enabled = cigarettesCount != "", // Кнопка активна когда есть текст
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (cigarettesCount != "" && cigarettesCount.isNotEmpty()) Color.Blue else Color.Gray
+                )
             ) {
                 Text(
                     text = stringResource(id = R.string.next),
@@ -144,17 +139,16 @@ fun CigarettesPerDayPage(
                 )
             }
 
-            Spacer(modifier = Modifier
-                .height(32.dp)
-                .weight(1f)
+            Spacer(
+                modifier = Modifier
+                    .height(32.dp)
+                    .weight(1f)
             )
 
             /** КЛАВИАТУРА */
 
             Column(
-                modifier = Modifier
-                    .border(BorderStroke(2.dp, Color.Red))
-                    .padding(bottom = 24.dp),
+                modifier = Modifier.padding(bottom = 24.dp),
                 verticalArrangement = Arrangement.Bottom
             ) {
                 // Разбиваем числа на ряды

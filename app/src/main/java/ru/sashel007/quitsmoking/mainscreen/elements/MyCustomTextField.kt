@@ -18,8 +18,6 @@ fun MyCustomTextField(
     label: @Composable () -> Unit
 ) {
 
-    var focusChecked by remember { mutableStateOf(false) }
-
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
