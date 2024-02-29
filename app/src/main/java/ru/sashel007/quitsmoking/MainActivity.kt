@@ -104,7 +104,6 @@ fun AppNavigator(userViewModel: UserViewModel) {
         }
     }
 
-
     Box(modifier = Modifier.fillMaxSize()) {
         NavHost(
             navController = navController,
@@ -127,9 +126,10 @@ fun AppNavigator(userViewModel: UserViewModel) {
                 )
             }
             composable(route = "cigarettesPerDayPage") {
-                CigarettesPerDayPage {
-                    navController.navigate("cigarettesInPackPage")
-                }
+                CigarettesPerDayPage(
+                    navController = navController,
+                    onClickForward = { navController.navigate("cigarettesInPackPage") }
+                )
             }
             composable(route = "cigarettesInPackPage") {
                 CigarettesInPackPage {

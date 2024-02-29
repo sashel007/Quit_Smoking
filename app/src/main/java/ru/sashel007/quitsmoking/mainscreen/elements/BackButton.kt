@@ -1,4 +1,4 @@
-package ru.sashel007.quitsmoking.ui.theme
+package ru.sashel007.quitsmoking.mainscreen.elements
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -19,18 +19,15 @@ import ru.sashel007.quitsmoking.R
 
 @Composable
 fun BackButtonImage(navController: NavController) {
-    Box(
-        modifier = Modifier.wrapContentSize()
-    ) {
+    Box(modifier = Modifier.wrapContentSize()) {
         Image(
-            painter = painterResource(id = R.drawable.back_button), // Замените на ID вашего ресурса изображения
-            contentDescription = stringResource(R.string.back_button), // Описание для доступности
+            painter = painterResource(id = R.drawable.back_button),
+            contentDescription = stringResource(R.string.back_button),
             modifier = Modifier
                 .size(32.dp) // Размер кнопки
                 .clickable {
                     navController.popBackStack()
                 }
         )
-        // Другие элементы UI могут быть добавлены здесь
     }
 }

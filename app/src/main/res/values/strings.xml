@@ -2,4 +2,12 @@
     <string name="app_name">Quit Smoking</string>
     <string name="settings">Настройки</string>
     <string name="back_button">Кнопка \"Назад\"</string>
+    <string name="quite_smoking">Когда вы бросили курить?</string>
+    <string name="if_you_keep_smoking">Если вы пока не бросили, выберите, когда собираетесь бросить</string>
+    <string name="pick_time">Выбрать время</string>
+    <string name="next">Дальше</string>
+    <string name="choose_date">Выбрать дату</string>
+    <string name="now">Сейчас</string>
+    <string name="how_much_cigarettes">Cколько сигарет вы выкуривали за день?</string>
+    <string name="cigarettes_amount">Количество сигарет</string>
 </resources>
