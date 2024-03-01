@@ -126,18 +126,17 @@ fun AppNavigator(userViewModel: UserViewModel) {
                 )
             }
             composable(route = "cigarettesPerDayPage") {
-                CigarettesPerDayPage(
-                    navController = navController,
-                    onClickForward = { navController.navigate("cigarettesInPackPage") }
-                )
+                CigarettesPerDayPage(navController = navController) {
+                    navController.navigate("cigarettesInPackPage")
+                }
             }
             composable(route = "cigarettesInPackPage") {
-                CigarettesInPackPage {
+                CigarettesInPackPage(navController = navController) {
                     navController.navigate("packCostPage")
                 }
             }
             composable(route = "packCostPage") {
-                PackCostPage {
+                PackCostPage(navController = navController) {
                     navController.navigate("firstMonthWithoutSmokingPage")
                 }
             }

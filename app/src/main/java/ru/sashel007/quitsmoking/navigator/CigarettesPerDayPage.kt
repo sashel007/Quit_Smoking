@@ -163,8 +163,8 @@ fun CigarettesPerDayPage(
 
                 rows.forEachIndexed { rowIndex, row ->
                     if (rowIndex > 0) {
-                        // Добавляем вертикальный Spacer между рядами для увеличения расстояния
-                        Spacer(modifier = Modifier.height(16.dp)) // Измените значение height, чтобы контролировать расстояние между рядами
+                        // Вертикальный Spacer между рядами для увеличения расстояния
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -197,7 +197,7 @@ fun CigarettesPerDayPage(
                                         Icon(
                                             painter = painterResource(id = R.drawable.back_button), // Убедитесь, что ресурс существует
                                             contentDescription = "Удалить",
-                                            tint = Color.Black // Используйте нужный цвет
+                                            tint = Color.Black
                                         )
                                     }
                                 }
