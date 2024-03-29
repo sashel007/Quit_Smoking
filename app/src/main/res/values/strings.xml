@@ -14,4 +14,8 @@
     <string name="cigarettes_in_package_short">Сигарет в пачке</string>
     <string name="how_much_one_pack_cost">Cколько стоит одна пачка?</string>
     <string name="one_pack_price">Стоимость одной пачки</string>
+    <string name="first_month_non_smoke">Ваш первый месяц без курения:</string>
+    <string name="non_smoked_cigarettes_summary">невыкуренных сигарет</string>
+    <string name="spent_money_summary">рублей потрачено</string>
+    <string name="un_data">По данным ВОЗ улучшатся \n4 разных аспекта вашего тела.</string>
 </resources>

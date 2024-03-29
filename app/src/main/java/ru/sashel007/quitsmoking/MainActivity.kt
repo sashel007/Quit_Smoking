@@ -20,21 +20,25 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.jakewharton.threetenabp.AndroidThreeTen
-import ru.sashel007.quitsmoking.dto.user.AppDatabase
-import ru.sashel007.quitsmoking.dto.user.UserDao
+import ru.sashel007.quitsmoking.data.db.AppDatabase
+import ru.sashel007.quitsmoking.data.db.dao.UserDao
+import ru.sashel007.quitsmoking.data.repository.UserRepository
 import ru.sashel007.quitsmoking.mainscreen.MainScreen
 import ru.sashel007.quitsmoking.navigator.CigarettesInPackPage
 import ru.sashel007.quitsmoking.navigator.CigarettesPerDayPage
@@ -45,21 +49,32 @@ import ru.sashel007.quitsmoking.navigator.PageIndicator
 import ru.sashel007.quitsmoking.navigator.QuitDateSelectionPage
 import ru.sashel007.quitsmoking.navigator.StartingPage
 import ru.sashel007.quitsmoking.ui.theme.QuitSmokingTheme
+import ru.sashel007.quitsmoking.util.AppState
+import ru.sashel007.quitsmoking.util.MySharedPref
+import ru.sashel007.quitsmoking.viewmodel.FirstLaunchViewModel
 import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 
 class MainActivity : ComponentActivity() {
 
     private var dataBase: AppDatabase? = null
     private lateinit var userDao: UserDao
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dataBase = AppDatabase.getDatabase(this)
         userDao = dataBase!!.userDao()
         AndroidThreeTen.init(this)
+        val sharedPref = MySharedPref(this)
+        val userRepository = UserRepository(userDao)
 
         setContent {
             QuitSmokingTheme {
-                val userViewModel: UserViewModel = viewModel()
+                val userVMFactory = UserViewModel.UserViewModelFactory(application, userRepository)
+                val userViewModel: UserViewModel = viewModel(factory = userVMFactory)
+                val firstLaunchVMFactory =
+                    FirstLaunchViewModel.FirstLaunchViewModelFactory(sharedPref)
+                val firstLaunchViewModel: FirstLaunchViewModel =
+                    viewModel(factory = firstLaunchVMFactory)
 
                 LaunchedEffect(key1 = Unit) {
                     userViewModel.allUserData.observeForever { userDataList ->
@@ -73,7 +88,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = Color.White
                 ) {
-                    AppNavigator(userViewModel)
+                    AppNavigator(userViewModel, firstLaunchViewModel)
                 }
             }
         }
@@ -81,9 +96,13 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun AppNavigator(userViewModel: UserViewModel) {
+fun AppNavigator(
+    userViewModel: UserViewModel,
+    firstLaunchViewModel: FirstLaunchViewModel
+) {
     val navController = rememberNavController()
     var currentPage by remember { mutableIntStateOf(0) }
+    val appState by firstLaunchViewModel.launchState.collectAsState()
 
     DisposableEffect(navController) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
@@ -101,6 +120,28 @@ fun AppNavigator(userViewModel: UserViewModel) {
         navController.addOnDestinationChangedListener(listener)
         onDispose {
             navController.removeOnDestinationChangedListener(listener)
+        }
+    }
+
+    LaunchedEffect(appState) {
+        when (appState) {
+            AppState.FIRST_LAUNCH -> {
+                navController.navigate("startingPage") {
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                }
+            }
+
+            AppState.SUBSEQUENT_LAUNCH -> {
+                navController.navigate("mainScreen") {
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                }
+            }
+
+            else -> Unit
         }
     }
 
@@ -141,7 +182,7 @@ fun AppNavigator(userViewModel: UserViewModel) {
                 }
             }
             composable(route = "firstMonthWithoutSmokingPage") {
-                FirstMonthWithoutSmokingPage {
+                FirstMonthWithoutSmokingPage(navController = navController) {
                     navController.navigate("notificationsPage")
                 }
             }
@@ -162,6 +203,7 @@ fun AppNavigator(userViewModel: UserViewModel) {
             )
         }
     }
+
 }
 
 fun forwardTransitionAnimation(): EnterTransition {

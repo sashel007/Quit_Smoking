@@ -1,4 +1,4 @@
-package ru.sashel007.quitsmoking.dto.achievement
+package ru.sashel007.quitsmoking.data.db.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

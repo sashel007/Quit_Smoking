@@ -49,13 +49,13 @@ fun Achievements() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 2.dp), // You can adjust this value to reduce the space at the bottom of the Column
-            verticalArrangement = Arrangement.Top // Align items to the top or use custom spacing
+                .padding(bottom = 2.dp),
+            verticalArrangement = Arrangement.Top
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 12.dp, start = 10.dp, end = 10.dp), // Adjust bottom padding to reduce space between this Row and LazyRow
+                    .padding(bottom = 12.dp, start = 10.dp, end = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -73,9 +73,8 @@ fun Achievements() {
                 )
             }
             LazyRow(
-                // You can control the spacing between items inside LazyRow with contentPadding and itemSpacing
-                contentPadding = PaddingValues(start = 10.dp, end = 10.dp), // Adjust horizontal padding for space around items
-                horizontalArrangement = Arrangement.spacedBy(10.dp) // Adjust space between items
+                contentPadding = PaddingValues(start = 10.dp, end = 10.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(List(10) { "Achievement #${it + 1}" }) { achievement ->
                     AchievementBlock(achievement)
@@ -97,7 +96,7 @@ fun AchievementBlock(achievement: String) {
     ) {
         Text(
             text = achievement,
-            fontSize = 10.sp, // Adjust as needed
+            fontSize = 10.sp,
             fontWeight = FontWeight.Normal,
             color = Color.Black
         )

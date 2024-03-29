@@ -22,8 +22,7 @@ fun MyCustomTextField(
         value = value,
         onValueChange = onValueChange,
         label = label,
-        modifier = Modifier
-            .focusProperties { canFocus = false }
+        modifier = Modifier.focusProperties { canFocus = false }
     )
 
 }

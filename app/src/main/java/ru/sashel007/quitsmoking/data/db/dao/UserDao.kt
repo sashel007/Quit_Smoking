@@ -1,4 +1,4 @@
-package ru.sashel007.quitsmoking.dto.user
+package ru.sashel007.quitsmoking.data.db.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
@@ -7,10 +7,10 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import ru.sashel007.quitsmoking.data.db.entity.UserData
 
 @Dao
 interface UserDao {
-
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(userData: UserData): Long // Обычно возвращается ID вставленной строки

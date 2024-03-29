@@ -39,6 +39,12 @@ object MyTextStyles {
         fontSize = 28.sp,
         fontWeight = FontWeight.Bold
     )
+
+    val summaryNumberTextStyle = TextStyle(
+        color = Color.Black,
+        fontSize = 28.sp,
+        fontWeight = FontWeight.Bold
+    )
 }
 
 object AppColors {

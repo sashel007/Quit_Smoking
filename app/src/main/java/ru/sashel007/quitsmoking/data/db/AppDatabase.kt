@@ -1,4 +1,4 @@
-package ru.sashel007.quitsmoking.dto.user
+package ru.sashel007.quitsmoking.data.db
 
 import android.content.Context
 import android.util.Log
@@ -9,7 +9,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.concurrent.Executors
+import ru.sashel007.quitsmoking.data.db.dao.UserDao
+import ru.sashel007.quitsmoking.data.db.entity.UserData
 
 @Database(entities = [UserData::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {

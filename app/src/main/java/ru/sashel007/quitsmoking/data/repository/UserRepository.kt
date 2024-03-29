@@ -1,7 +1,9 @@
-package ru.sashel007.quitsmoking.dto.user
+package ru.sashel007.quitsmoking.data.repository
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import ru.sashel007.quitsmoking.data.db.dao.UserDao
+import ru.sashel007.quitsmoking.data.db.entity.UserData
 
 class UserRepository(private val userDao: UserDao) {
     val userData: LiveData<UserData> = userDao.getUserData(1) // Example ID

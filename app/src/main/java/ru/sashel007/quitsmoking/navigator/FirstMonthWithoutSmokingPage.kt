@@ -3,7 +3,18 @@ package ru.sashel007.quitsmoking.navigator
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -13,7 +24,10 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -21,101 +35,160 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ru.sashel007.quitsmoking.R
+import ru.sashel007.quitsmoking.mainscreen.elements.BackButtonImage
+import ru.sashel007.quitsmoking.ui.theme.AppColors.violette
+import ru.sashel007.quitsmoking.ui.theme.MyTextStyles.summaryNumberTextStyle
 import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 
+
+/** PAGE: Первый месяц без курения */
 @Composable
-fun FirstMonthWithoutSmokingPage(function: () -> Unit) {
+fun FirstMonthWithoutSmokingPage(
+    navController: NavController,
+    onClickForward: () -> Unit
+) {
     val userViewModel: UserViewModel = viewModel()
     val currentUserData by userViewModel.userData.observeAsState()
     val cigarettesCount = currentUserData?.cigarettesPerDay ?: 0
     val packCost = currentUserData?.packCost ?: 0
-    Log.d("FirstMonthWithoutSmokingPage", "$cigarettesCount + $currentUserData")
     val nonSmokedCigarettes = cigarettesCount * 30
     val cigarettesInPack = 20
     val daysInMonth = 30
+
+    Log.d(
+        "ПЕРЕМЕННЫЕ", "packCost = $packCost, cigarettesInPack = $cigarettesInPack\n" +
+                "nonSmokedCigarettes = $nonSmokedCigarettes, daysInMonth = $daysInMonth"
+    )
     val monthMoneySpent = packCost / cigarettesInPack * nonSmokedCigarettes * daysInMonth
+    Log.d("ПЕРЕМЕННЫЕ", "monthMoneySpent = $monthMoneySpent")
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize().padding(16.dp)
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopCenter,
     ) {
-        Text(text = "Ваш первый месяц без курения", fontSize = 20.sp, modifier = Modifier.padding(bottom = 24.dp))
-
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(150.dp)
-                    .background(Color.LightGray)
-                    .padding(16.dp)
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.cigarette_smoked), // Replace with your image
-                        contentDescription = "Image 1",
-                        modifier = Modifier.weight(1f)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "$nonSmokedCigarettes", modifier = Modifier.weight(1f))
-                    Text(
-                        text = "невыкуренных сигарет",
-                        modifier = Modifier.weight(1f),
-                        fontSize = 14.sp, // или другой размер, который вам подходит
-                        textAlign = TextAlign.Center,
-                        lineHeight = 16.sp // или другой размер, который вам подходит
-                    )
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .size(150.dp)
-                    .background(Color.LightGray)
-                    .padding(16.dp)
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.rubble), // Replace with your image
-                        contentDescription = "Image 2",
-                        modifier = Modifier.weight(1f)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "$monthMoneySpent")
-                    Text(
-                        text = "потрачено рублей",
-                        modifier = Modifier.weight(1f),
-                        fontSize = 14.sp, // или другой размер, который вам подходит
-                        textAlign = TextAlign.Center,
-                        lineHeight = 16.sp // или другой размер, который вам подходит
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Text(text = "по данный ВОЗ улучшатся 4 разных аспекта вашего тела", fontSize = 18.sp)
-
-        Button(
-            onClick = { function() },
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp)
-                .padding(start = 2.dp, top = 5.dp, end = 2.dp, bottom = 2.dp),
-            shape = RoundedCornerShape(8.dp)
+                .fillMaxSize()
+                .padding(24.dp)
         ) {
+
+            /** КНОПКА "НАЗАД" */
+
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                BackButtonImage(navController = navController)
+            }
+            Spacer(modifier = Modifier.height(88.dp))
+
+            /** ТЕКСТ */
+
             Text(
-                text = "Дальше",
+                text = stringResource(id = R.string.first_month_non_smoke),
+                color = violette,
                 fontSize = 20.sp,
-                color = Color.White
+                modifier = Modifier.padding(bottom = 24.dp)
             )
+            /** ИТОГ */
+
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .height(260.dp)
+                        .width(150.dp)
+                        .border(2.dp, violette, RoundedCornerShape(10.dp))
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.cigarettes_smoked_summary),
+                            contentDescription = "Image 1",
+                            modifier = Modifier
+                                .size(120.dp)
+                                .padding(top = 10.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "$nonSmokedCigarettes",
+                            modifier = Modifier.weight(1f),
+                            style = summaryNumberTextStyle
+                        )
+                        Text(
+                            text = stringResource(R.string.non_smoked_cigarettes_summary),
+                            modifier = Modifier.weight(1.5f),
+                            fontSize = 18.sp,
+                            textAlign = TextAlign.Center,
+                            lineHeight = 16.sp
+                        )
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .height(260.dp)
+                        .width(150.dp)
+                        .border(2.dp, violette, RoundedCornerShape(10.dp))
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.money_spent_summary),
+                            contentDescription = "Image 2",
+                            modifier = Modifier
+                                .size(120.dp)
+                                .padding(top = 10.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "$monthMoneySpent",
+                            modifier = Modifier.weight(1f),
+                            style = summaryNumberTextStyle
+                        )
+                        Text(
+                            text = stringResource(R.string.spent_money_summary),
+                            modifier = Modifier.weight(1.5f),
+                            fontSize = 18.sp,
+                            textAlign = TextAlign.Center,
+                            lineHeight = 16.sp
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            /** ПО ДАННЫМ ВОЗ... */
+
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Box(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = stringResource(R.string.un_data),
+                        fontSize = 18.sp
+                    )
+                }
+            }
+
+            Button(
+                onClick = { onClickForward() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp)
+                    .padding(start = 14.dp, top = 5.dp, end = 2.dp, bottom = 2.dp),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.next),
+                    fontSize = 20.sp,
+                    color = Color.White
+                )
+            }
         }
     }
 }

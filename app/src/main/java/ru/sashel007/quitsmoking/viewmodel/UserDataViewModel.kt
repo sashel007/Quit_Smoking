@@ -4,14 +4,20 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import ru.sashel007.quitsmoking.dto.user.AppDatabase
-import ru.sashel007.quitsmoking.dto.user.UserData
-import ru.sashel007.quitsmoking.dto.user.UserRepository
+import ru.sashel007.quitsmoking.data.db.AppDatabase
+import ru.sashel007.quitsmoking.data.db.entity.UserData
+import ru.sashel007.quitsmoking.data.repository.UserRepository
+import ru.sashel007.quitsmoking.util.MySharedPref
 
-class UserViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: UserRepository
+class UserViewModel(
+    application: Application,
+    private var repository: UserRepository,
+) : AndroidViewModel(application) {
 
     init {
         val userDao = AppDatabase.getDatabase(application).userDao()
@@ -69,11 +75,16 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         return repository.getAllUserData()
     }
 
-//    fun refreshUserData() = viewModelScope.launch {
-//        val updatedUserData = repository.getUserByIdAsync(userId)
-//        // Теперь обновляем LiveData
-//        if (updatedUserData != null) {
-//            _userData.value = updatedUserData
-//        }
-//    }
+    class UserViewModelFactory(
+        private val application: Application,
+        private val repository: UserRepository
+    ) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(UserViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return UserViewModel(application, repository) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class")
+        }
+    }
 }
