@@ -18,4 +18,17 @@
     <string name="non_smoked_cigarettes_summary">невыкуренных сигарет</string>
     <string name="spent_money_summary">рублей потрачено</string>
     <string name="un_data">По данным ВОЗ улучшатся \n4 разных аспекта вашего тела.</string>
+    <string name="achievement_title">Достижения</string>
+    <string name="show_all">Показать всё</string>
+    <string name="motivation_title">Мотивация</string>
+    <string name="advices_title">Советы</string>
+    <string name="licenced_text">Sidorkin Alexander licenced: sashel007@yandex.ru 2024</string>
+    <string name="dont_smoke_title">Я НЕ КУРЮ</string>
+    <string name="common_progress">Общий прогресс</string>
+    <string name="days_after_cancelling">дней после отказа</string>
+    <string name="smoked_cigarettes">выкуренных сигарет</string>
+    <string name="money_saved">сэкономлено денег</string>
+    <string name="time_saved">экономия времени</string>
+    <string name="collapse_box">Свернуть</string>
+    <string name="more_details">Подробнее...</string>
 </resources>

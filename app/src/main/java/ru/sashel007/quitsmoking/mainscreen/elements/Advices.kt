@@ -22,9 +22,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ru.sashel007.quitsmoking.R
 
 @Composable
 fun Advices() {
@@ -32,40 +34,53 @@ fun Advices() {
         modifier = Modifier
             .width(360.dp)
             .height(188.dp)
-            .clip(RoundedCornerShape(topStart = 14.dp, topEnd = 14.dp, bottomStart = 14.dp, bottomEnd = 14.dp))
-            .background(Color(red = 255 / 255f, green = 169 / 255f, blue = 157 / 255f, alpha = 255 / 255f))
+            .clip(
+                RoundedCornerShape(
+                    topStart = 14.dp,
+                    topEnd = 14.dp,
+                    bottomStart = 14.dp,
+                    bottomEnd = 14.dp
+                )
+            )
+            .background(
+                Color(
+                    red = 255 / 255f,
+                    green = 169 / 255f,
+                    blue = 157 / 255f,
+                    alpha = 255 / 255f
+                )
+            )
             .padding(top = 10.dp, bottom = 10.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 8.dp), // You can adjust this value to reduce the space at the bottom of the Column
-            verticalArrangement = Arrangement.Top // Align items to the top or use custom spacing
+                .padding(bottom = 8.dp),
+            verticalArrangement = Arrangement.Top
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 12.dp, start = 10.dp, end = 10.dp), // Adjust bottom padding to reduce space between this Row and LazyRow
+                    .padding(bottom = 12.dp, start = 10.dp, end = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Советы",
+                    text = stringResource(R.string.advices_title),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
                 Text(
-                    text = "Показать всё",
+                    text = stringResource(id = R.string.show_all),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Normal,
                     color = Color.Black
                 )
             }
             LazyRow(
-                // You can control the spacing between items inside LazyRow with contentPadding and itemSpacing
-                contentPadding = PaddingValues(start = 10.dp, end = 10.dp), // Adjust horizontal padding for space around items
-                horizontalArrangement = Arrangement.spacedBy(10.dp) // Adjust space between items
+                contentPadding = PaddingValues(start = 10.dp, end = 10.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(List(10) { "Motivation #${it + 1}" }) { adviceInfo ->
                     AdviceBlock(adviceInfo)
@@ -87,7 +102,7 @@ fun AdviceBlock(adviceInfo: String) {
     ) {
         Text(
             text = adviceInfo,
-            fontSize = 10.sp, // Adjust as needed
+            fontSize = 10.sp,
             fontWeight = FontWeight.Normal,
             color = Color.Black
         )

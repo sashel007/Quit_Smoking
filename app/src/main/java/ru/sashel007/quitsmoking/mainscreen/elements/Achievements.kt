@@ -31,10 +31,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
+import ru.sashel007.quitsmoking.R
 
 @Composable
 fun Achievements() {
@@ -42,9 +44,16 @@ fun Achievements() {
         modifier = Modifier
             .width(360.dp)
             .height(188.dp)
-            .clip(RoundedCornerShape(topStart = 14.dp, topEnd = 14.dp, bottomStart = 14.dp, bottomEnd = 14.dp))
+            .clip(
+                RoundedCornerShape(
+                    topStart = 14.dp,
+                    topEnd = 14.dp,
+                    bottomStart = 14.dp,
+                    bottomEnd = 14.dp
+                )
+            )
             .background(Color(red = 0.7372549f, green = 0.7372549f, blue = 0.9137255f, alpha = 1f))
-            .padding(top = 10.dp, bottom = 10.dp)
+            .padding(10.dp)
     ) {
         Column(
             modifier = Modifier
@@ -60,13 +69,13 @@ fun Achievements() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Достижения",
+                    text = stringResource(R.string.achievement_title),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
                 Text(
-                    text = "Показать всё",
+                    text = stringResource(R.string.show_all),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Normal,
                     color = Color.Black
