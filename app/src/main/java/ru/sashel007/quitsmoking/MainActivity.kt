@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             QuitSmokingTheme {
-                val userVMFactory = UserViewModel.UserViewModelFactory(application, userRepository)
+                val userVMFactory = UserViewModel.UserViewModelFactory(application, userRepository, userDao)
                 val userViewModel: UserViewModel = viewModel(factory = userVMFactory)
                 val firstLaunchVMFactory =
                     FirstLaunchViewModel.FirstLaunchViewModelFactory(sharedPref)
@@ -77,10 +77,7 @@ class MainActivity : ComponentActivity() {
                     viewModel(factory = firstLaunchVMFactory)
 
                 LaunchedEffect(key1 = Unit) {
-                    userViewModel.allUserData.observeForever { userDataList ->
-                        userDataList.forEach { userData ->
-                            Log.d("DatabaseData", userData.toString())
-                        }
+                    userViewModel.userData.observeForever { userData ->
                     }
                 }
 

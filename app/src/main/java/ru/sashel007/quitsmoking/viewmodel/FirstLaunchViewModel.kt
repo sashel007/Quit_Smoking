@@ -30,7 +30,12 @@ class FirstLaunchViewModel(
                 _launchState.value = AppState.FIRST_LAUNCH
                 sharedPref.setFirstLaunch(false)
             } else {
-                _launchState.value = AppState.SUBSEQUENT_LAUNCH
+            /*     _launchState.value = AppState.SUBSEQUENT_LAUNCH */
+                /* Временно ставлю FIRST_LAUNCH,
+                потом надо будет вернуть
+                SUBSEQUENT_LAUNCH обратно
+                 */
+                _launchState.value = AppState.FIRST_LAUNCH
             }
         }
     }
