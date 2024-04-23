@@ -5,34 +5,39 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import ru.sashel007.quitsmoking.data.db.AppDatabase
-import ru.sashel007.quitsmoking.data.db.dao.UserDao
 import ru.sashel007.quitsmoking.data.db.entity.UserData
-import ru.sashel007.quitsmoking.data.repository.UserRepository
+import ru.sashel007.quitsmoking.data.repository.MyRepositoryImpl
 import ru.sashel007.quitsmoking.data.repository.dto.UserDto
-import ru.sashel007.quitsmoking.util.MySharedPref
+import ru.sashel007.quitsmoking.data.repository.dto.mappers.UserMapper.toEntity
+import javax.inject.Inject
 
-class UserViewModel(
+@HiltViewModel
+class UserViewModel @Inject constructor(
     application: Application,
-    private var repository: UserRepository,
-    private var userDao: UserDao
+    private var repository: MyRepositoryImpl
 ) : AndroidViewModel(application) {
+
+    private val _userData = MutableLiveData<UserDto>()
+    val userData: LiveData<UserDto> = _userData
 
     companion object {
         const val USER_ID = 1
     }
 
-    private val _userData = MutableLiveData<UserDto>()
-    val userData: LiveData<UserDto> = _userData
-
     init {
         loadData()
-        userDao = AppDatabase.getDatabase(application).userDao()
-        repository = UserRepository(userDao)
+        Log.d("UserViewModel_check", "ViewModel created")
+        log()
+    }
+
+    private fun log() {
+        viewModelScope.launch {
+            val loggedUserData: UserData = repository.getUserData(1).toEntity()
+            Log.d("TEST_2", "$loggedUserData")
+        }
     }
 
     private fun loadData() {
@@ -43,26 +48,16 @@ class UserViewModel(
     }
 
     fun insert(userDto: UserDto) = viewModelScope.launch {
-        repository.insert(userDto)
+        repository.insertUser(userDto)
     }
 
     fun delete(userDto: UserDto) = viewModelScope.launch {
-        repository.delete(userDto)
+        repository.deleteUser(userDto)
     }
 
-    fun getUserData(id: Int) = viewModelScope.launch {
-        repository.getUserData(id)
-    }
-
-    fun updateQuitDate(quitDate: Long) {
+    fun updateQuitTimeInMillisec(quitTime: Long) {
         viewModelScope.launch {
-            repository.updateQuitDate(USER_ID, quitDate)
-        }
-    }
-
-    fun updateQuitTime(quitTime: Int) {
-        viewModelScope.launch {
-            repository.updateQuitTime(USER_ID, quitTime)
+            repository.updateQuitTimeInMillisec(USER_ID, quitTime)
         }
     }
 
@@ -83,20 +78,5 @@ class UserViewModel(
         viewModelScope.launch {
             repository.updatePackCost(USER_ID, packCost)
         }
-    }
-
-    class UserViewModelFactory(
-        private val application: Application,
-        private val repository: UserRepository,
-        private val userDao: UserDao
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(UserViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return UserViewModel(application, repository, userDao) as T
-            }
-            throw IllegalArgumentException("Unknown ViewModel class")
-        }
-
     }
 }

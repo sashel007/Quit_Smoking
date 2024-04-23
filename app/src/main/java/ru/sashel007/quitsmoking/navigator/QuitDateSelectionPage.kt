@@ -54,10 +54,10 @@ import java.util.Locale
 
 @Composable
 fun QuitDateSelectionPage(
-    viewModel: UserViewModel,
-    onClickForward: () -> Unit,
+    userViewModel: UserViewModel,
     navController: NavController,
-) {
+    onClickForward: () -> Unit
+    ) {
     val quitDate =
         remember { mutableStateOf(Calendar.getInstance().time) }
     val quitTime = remember { mutableIntStateOf(0) }
@@ -128,7 +128,7 @@ fun QuitDateSelectionPage(
                 val currentDate = LocalDate.now()
                 val currentTime = LocalTime.now()
                 val russianLocale = Locale("ru")
-                val dateFormatter = DateTimeFormatter.ofPattern("dd MMMM", russianLocale)
+                val dateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", russianLocale)
                 val timeFormatter = DateTimeFormatter.ofPattern("HH:mm", russianLocale)
                 Text(
                     text = "${currentDate.format(dateFormatter)} в ${
@@ -155,11 +155,10 @@ fun QuitDateSelectionPage(
                     onClick = {
                         val calendar = Calendar.getInstance()
                         DatePickerDialog(
-                            context, // Your activity or fragment's context
+                            context,
                             { _, year, month, dayOfMonth ->
                                 calendar.set(year, month, dayOfMonth)
                                 quitDate.value = calendar.time
-                                Log.d("DatePicker", "Selected date: ${quitDate.value}")
                             },
                             calendar.get(Calendar.YEAR),
                             calendar.get(Calendar.MONTH),
@@ -190,10 +189,6 @@ fun QuitDateSelectionPage(
                             context,
                             { _, hourOfDay, minute ->
                                 quitTime.intValue = hourOfDay * 60 + minute
-                                Log.d(
-                                    "TimePicker",
-                                    "Selected time: $hourOfDay:$minute, Total minutes since midnight: ${quitTime.intValue}"
-                                )
                             },
                             currentHour,
                             currentMinute,
@@ -247,7 +242,7 @@ fun QuitDateSelectionPage(
 
             Button(
                 onClick = {
-                    saveQuitDetails(viewModel, quitDate.value, quitTime.intValue)
+                    saveQuitDetails(userViewModel, quitDate.value, quitTime.intValue)
                     onClickForward()
                 },
                 modifier = Modifier
@@ -268,8 +263,9 @@ fun QuitDateSelectionPage(
 fun saveQuitDetails(userViewModel: UserViewModel, date: Date, timeInMinutes: Int) {
     // Конвертация Date в милисекунлы
     val quitDateInMillis = date.time
+    Log.d("Test_2", "$quitDateInMillis")
 
     // Вызов ViewModel для обновления значений о времени
-    userViewModel.updateQuitDate(quitDateInMillis)
-    userViewModel.updateQuitTime(timeInMinutes)
+    userViewModel.updateQuitTimeInMillisec(quitDateInMillis)
+//    userViewModel.updateQuitTime(timeInMinutes)
 }

@@ -44,10 +44,10 @@ import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 @Composable
 fun PackCostPage(
     navController: NavController,
+    userViewModel: UserViewModel,
     onClickForward: () -> Unit
 ) {
     var packCost by remember { mutableStateOf("") }
-    val userViewModel: UserViewModel = viewModel()
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -110,7 +110,7 @@ fun PackCostPage(
             Button(
                 onClick = {
                     val count = packCost.toInt()
-                    userViewModel.updateCigarettesInPack(count)
+                    userViewModel.updatePackCost(count)
                     onClickForward()
                 },
                 modifier = Modifier

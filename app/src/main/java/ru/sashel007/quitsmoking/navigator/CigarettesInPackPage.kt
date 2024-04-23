@@ -45,10 +45,10 @@ import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 @Composable
 fun CigarettesInPackPage(
     navController: NavController,
+    userViewModel: UserViewModel,
     onNextClicked: () -> Unit
 ) {
     var cigarettesInPack by remember { mutableStateOf("") }
-    val userViewModel: UserViewModel = viewModel()
 
     Box(
         modifier = Modifier.fillMaxSize(),

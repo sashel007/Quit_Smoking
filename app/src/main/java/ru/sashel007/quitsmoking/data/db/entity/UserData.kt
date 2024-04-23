@@ -5,10 +5,9 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "user_data")
 data class UserData(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     val id: Int = 1,
-    val quitDate: Long,
-    val quitTime: Int,
+    val quitTimeInMillisec: Long,
     val cigarettesPerDay: Int,
     val cigarettesInPack: Int,
     val packCost: Int

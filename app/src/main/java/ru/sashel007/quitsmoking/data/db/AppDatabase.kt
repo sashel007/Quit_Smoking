@@ -5,67 +5,83 @@ import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import ru.sashel007.quitsmoking.data.db.dao.AchievementDao
 import ru.sashel007.quitsmoking.data.db.dao.UserDao
+import ru.sashel007.quitsmoking.data.db.entity.AchievementData
 import ru.sashel007.quitsmoking.data.db.entity.UserData
+import ru.sashel007.quitsmoking.util.AchievementSerialization
 
-@Database(entities = [UserData::class], version = 1, exportSchema = false)
+@Database(entities = [UserData::class, AchievementData::class], version = 7, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
+    abstract fun achievementDao(): AchievementDao
 
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
         fun getDatabase(context: Context): AppDatabase {
-            Log.d("AppDatabase", "getDatabase called") // Логирование вызова метода getDatabase
+            Log.d("JSON Loading","Получение экземпляра AppDatabase")
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
                     "app_database"
                 )
+//                    .addMigrations(object : Migration(4, 5) {
+//                        override fun migrate(db: SupportSQLiteDatabase) {
+//                            db.execSQL(
+//                                """
+//                        CREATE TABLE IF NOT EXISTS `achievements` (
+//                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+//                        `name` TEXT NOT NULL,
+//                        `description` TEXT NOT NULL,
+//                        `imageUri` TEXT NOT NULL,
+//                        `isUnlocked` INTEGER NOT NULL,
+//                        `progressLine` INTEGER NOT NULL)
+//                    """
+//                            )
+//                        }
+//                    })
                     .addCallback(object : RoomDatabase.Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
-                            Log.d("AppDatabase", "onCreate called - initializing database")
-                            // Создаем CoroutineScope с IO Dispatcher
                             CoroutineScope(Dispatchers.IO).launch {
-                                Log.d("AppDatabase", "Coroutine started for initializing data")
-                                // Получаем DAO и выполняем вставку данных
-                                val userDao = INSTANCE?.userDao()
-                                userDao?.insert(
-                                    UserData(
-                                    // Так как ID автогенерируется, мы не указываем его
-                                    quitDate = System.currentTimeMillis(),
-                                    quitTime = 0,
-                                    cigarettesPerDay = 0,
-                                    cigarettesInPack = 0,
-                                    packCost = 0
-                                )
-                                )
-                                Log.d("AppDatabase", "Initial data inserted")
+                                INSTANCE?.let { database ->
+                                    val userDao = database.userDao()
+                                    userDao.insert(
+                                        UserData(
+                                            id = 1,
+                                            quitTimeInMillisec = 0L,
+                                            cigarettesPerDay = 0,
+                                            cigarettesInPack = 0,
+                                            packCost = 0
+                                        )
+                                    )
+                                    val achievementDao = database.achievementDao()
+                                    val jsonUtils = AchievementSerialization(context)
+                                    Log.d("JSON Loading","Дощёл ли сюда код_1")
+                                    val achievements = jsonUtils.loadAchievementsFromJson()
+                                    Log.d("JSON Loading", "Loaded: ${achievements.size} achievements")
+                                    achievements.forEach { Log.d("JSON Loading", "Name: ${it.name}, Unlocked: ${it.isUnlocked}") }
+                                    Log.d("JSON Loading","Дощёл ли сюда код_2")
+                                    achievementDao.insertAll(achievements)
+                                }
                             }
                         }
                     })
                     .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
-                // Логирование создания или получения экземпляра базы данных
-                Log.d("AppDatabase", "Database instance created or retrieved")
+                Log.d("JSON Loading", "Database instance created or retrieved")
                 instance
             }
         }
     }
 }
-
-//put("id", 1)
-//put("quitDate", System.currentTimeMillis())
-//put("quitTime", 0)
-//put("cigarettesPerDay", 0)
-//put("cigarettesInPack", 0)
-//put("packCost", 0)
 

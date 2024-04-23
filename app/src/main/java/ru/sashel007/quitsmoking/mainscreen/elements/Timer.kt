@@ -1,5 +1,8 @@
 package ru.sashel007.quitsmoking.mainscreen.elements
 
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,17 +15,32 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ru.sashel007.quitsmoking.R
+import ru.sashel007.quitsmoking.data.repository.dto.SmokingStats
+import ru.sashel007.quitsmoking.viewmodel.SmokingStatsViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Timer() {
+fun Timer(smokingStats: androidx.compose.runtime.State<SmokingStats?>) {
+    val days by remember(smokingStats.value?.days) {
+        derivedStateOf {
+            smokingStats.value?.days.toString()
+        }
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -46,13 +64,13 @@ fun Timer() {
                 modifier = Modifier.fillMaxHeight()
             ) {
                 Text(
-                    text = "9",
+                    text = days,
                     fontWeight = FontWeight.Bold,
                     fontSize = 27.sp,
                     color = Color(0xFF590D82)
                 )
                 Text(
-                    text = "дней",
+                    text = stringResource(R.string.days_),
                     fontSize = 18.sp,
                     color = Color(0xFF590D82)
                 )
@@ -67,19 +85,20 @@ fun Timer() {
                 .padding(8.dp),
             contentAlignment = Alignment.Center
         ) {
+// aAnYPOr0XzNY4zr0GpD4
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,  // Center items vertically
                 modifier = Modifier.fillMaxHeight()
             ) {
                 Text(
-                    text = "5",
+                    text = smokingStats.value?.hours.toString(),
                     fontWeight = FontWeight.Bold,
                     fontSize = 27.sp,
                     color = Color(0xFF590D82)
                 )
                 Text(
-                    text = "часов",
+                    text = stringResource(R.string.hours_),
                     fontSize = 18.sp,
                     color = Color(0xFF590D82)
                 )
@@ -100,13 +119,13 @@ fun Timer() {
                 modifier = Modifier.fillMaxHeight()
             ) {
                 Text(
-                    text = "20",
+                    text = smokingStats.value?.minutes.toString(),
                     fontWeight = FontWeight.Bold,
                     fontSize = 27.sp,
                     color = Color(0xFF590D82)
                 )
                 Text(
-                    text = "минут",
+                    text = stringResource(R.string.minutes_),
                     fontSize = 18.sp,
                     color = Color(0xFF590D82)
                 )

@@ -1,9 +1,13 @@
 package ru.sashel007.quitsmoking
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.EaseIn
@@ -22,23 +26,21 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.jakewharton.threetenabp.AndroidThreeTen
-import ru.sashel007.quitsmoking.data.db.AppDatabase
-import ru.sashel007.quitsmoking.data.db.dao.UserDao
-import ru.sashel007.quitsmoking.data.repository.UserRepository
+import dagger.hilt.android.AndroidEntryPoint
+import ru.sashel007.quitsmoking.data.db.dao.AchievementDao
+import ru.sashel007.quitsmoking.data.db.entity.AchievementData
 import ru.sashel007.quitsmoking.mainscreen.MainScreen
 import ru.sashel007.quitsmoking.navigator.CigarettesInPackPage
 import ru.sashel007.quitsmoking.navigator.CigarettesPerDayPage
@@ -51,51 +53,60 @@ import ru.sashel007.quitsmoking.navigator.StartingPage
 import ru.sashel007.quitsmoking.ui.theme.QuitSmokingTheme
 import ru.sashel007.quitsmoking.util.AppState
 import ru.sashel007.quitsmoking.util.MySharedPref
+import ru.sashel007.quitsmoking.viewmodel.AchievementViewModel
 import ru.sashel007.quitsmoking.viewmodel.FirstLaunchViewModel
+import ru.sashel007.quitsmoking.viewmodel.SmokingStatsViewModel
 import ru.sashel007.quitsmoking.viewmodel.UserViewModel
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var sharedPref: MySharedPref
 
-    private var dataBase: AppDatabase? = null
-    private lateinit var userDao: UserDao
-
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dataBase = AppDatabase.getDatabase(this)
-        userDao = dataBase!!.userDao()
         AndroidThreeTen.init(this)
-        val sharedPref = MySharedPref(this)
-        val userRepository = UserRepository(userDao)
+        val userViewModel: UserViewModel by viewModels<UserViewModel>()
+        val firstLaunchViewModel: FirstLaunchViewModel by viewModels<FirstLaunchViewModel>()
+        val smokingStatsViewModel: SmokingStatsViewModel by viewModels<SmokingStatsViewModel>()
+        val achievementViewModel: AchievementViewModel by viewModels<AchievementViewModel>()
 
         setContent {
             QuitSmokingTheme {
-                val userVMFactory = UserViewModel.UserViewModelFactory(application, userRepository, userDao)
-                val userViewModel: UserViewModel = viewModel(factory = userVMFactory)
-                val firstLaunchVMFactory =
-                    FirstLaunchViewModel.FirstLaunchViewModelFactory(sharedPref)
-                val firstLaunchViewModel: FirstLaunchViewModel =
-                    viewModel(factory = firstLaunchVMFactory)
-
-                LaunchedEffect(key1 = Unit) {
-                    userViewModel.userData.observeForever { userData ->
-                    }
-                }
-
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = Color.White
                 ) {
-                    AppNavigator(userViewModel, firstLaunchViewModel)
+                    AppNavigator(
+                        userViewModel,
+                        firstLaunchViewModel,
+                        smokingStatsViewModel,
+                        achievementViewModel
+                    )
                 }
             }
         }
+
+        smokingStatsViewModel.showDialogEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()
+            onShowDialog()
+        })
+    }
+
+    private fun onShowDialog() {
+        Toast.makeText(applicationContext, "TIME IN FUTURE", Toast.LENGTH_SHORT).show()
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavigator(
     userViewModel: UserViewModel,
-    firstLaunchViewModel: FirstLaunchViewModel
+    firstLaunchViewModel: FirstLaunchViewModel,
+    smokingStatsViewModel: SmokingStatsViewModel,
+    achievementViewModel: AchievementViewModel
 ) {
     val navController = rememberNavController()
     var currentPage by remember { mutableIntStateOf(0) }
@@ -111,7 +122,7 @@ fun AppNavigator(
                 "packCostPage" -> currentPage = 4
                 "firstMonthWithoutSmokingPage" -> currentPage = 5
                 "notificationsPage" -> currentPage = 6
-                "mainScreen" -> currentPage = 7  // Add this case
+                "mainScreen" -> currentPage = 7
             }
         }
         navController.addOnDestinationChangedListener(listener)
@@ -158,28 +169,32 @@ fun AppNavigator(
             }
             composable(route = "quitDateSelectionPage") {
                 QuitDateSelectionPage(
-                    viewModel = userViewModel,
-                    onClickForward = { navController.navigate("cigarettesPerDayPage") },
-                    navController = navController,
-                )
+                    userViewModel = userViewModel,
+                    navController = navController
+                ) {
+                    navController.navigate("cigarettesPerDayPage")
+                }
             }
             composable(route = "cigarettesPerDayPage") {
-                CigarettesPerDayPage(navController = navController) {
+                CigarettesPerDayPage(navController = navController, userViewModel = userViewModel) {
                     navController.navigate("cigarettesInPackPage")
                 }
             }
             composable(route = "cigarettesInPackPage") {
-                CigarettesInPackPage(navController = navController) {
+                CigarettesInPackPage(navController = navController, userViewModel = userViewModel) {
                     navController.navigate("packCostPage")
                 }
             }
             composable(route = "packCostPage") {
-                PackCostPage(navController = navController) {
+                PackCostPage(navController = navController, userViewModel = userViewModel) {
                     navController.navigate("firstMonthWithoutSmokingPage")
                 }
             }
             composable(route = "firstMonthWithoutSmokingPage") {
-                FirstMonthWithoutSmokingPage(navController = navController) {
+                FirstMonthWithoutSmokingPage(
+                    navController = navController,
+                    userViewModel = userViewModel
+                ) {
                     navController.navigate("notificationsPage")
                 }
             }
@@ -189,10 +204,14 @@ fun AppNavigator(
                 }
             }
             composable(route = "mainScreen") {
-                MainScreen()
+                MainScreen(
+                    userViewModel = userViewModel,
+                    smokingStatsViewModel = smokingStatsViewModel,
+                    achievementViewModel = achievementViewModel
+                )
             }
         }
-        if (currentPage != 7) { // Assuming "mainScreen" corresponds to a value of 7
+        if (currentPage != 7) {
             PageIndicator(
                 currentPage = currentPage,
                 numberOfPages = 7,

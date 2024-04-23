@@ -47,10 +47,10 @@ import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 @Composable
 fun CigarettesPerDayPage(
     navController: NavController,
+    userViewModel: UserViewModel,
     onClickForward: () -> Unit
 ) {
     var cigarettesCount by remember { mutableStateOf("") }
-    val userViewModel: UserViewModel = viewModel()
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -116,6 +116,7 @@ fun CigarettesPerDayPage(
                 onClick = {
                     try {
                         val updatedCigaretteCount = cigarettesCount.toInt()
+                        Log.d("TEST_2_updatedCigaretteCount", "$updatedCigaretteCount")
                         userViewModel.updateCigarettesPerDay(updatedCigaretteCount)
                         onClickForward()
                     } catch (e: NumberFormatException) {

@@ -2,7 +2,6 @@ package ru.sashel007.quitsmoking.navigator
 
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,15 +23,11 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ru.sashel007.quitsmoking.R
 import ru.sashel007.quitsmoking.mainscreen.elements.BackButtonImage
@@ -45,22 +40,25 @@ import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 @Composable
 fun FirstMonthWithoutSmokingPage(
     navController: NavController,
+    userViewModel: UserViewModel,
     onClickForward: () -> Unit
 ) {
-    val userViewModel: UserViewModel = viewModel()
     val currentUserData by userViewModel.userData.observeAsState()
-    val cigarettesCount = currentUserData?.cigarettesPerDay ?: 0
-    val packCost = currentUserData?.packCost ?: 0
-    val nonSmokedCigarettes = cigarettesCount * 30
-    val cigarettesInPack = 20
+    val cigarettesPerDay = currentUserData?.cigarettesPerDay ?: 1
+    Log.d("Level_error", "$cigarettesPerDay")
+    val packCost = currentUserData?.packCost ?: 1
+    val nonSmokedCigarettes = cigarettesPerDay * 30
+    val cigarettesInPack = currentUserData?.cigarettesInPack ?: 1
     val daysInMonth = 30
+    val daysForOnePack = if (cigarettesPerDay > 0) cigarettesInPack / cigarettesPerDay else 1
+    val packsForMonth = if (cigarettesPerDay > 0) daysInMonth / daysForOnePack else 1
+    val monthMoneySaved = packCost * packsForMonth
 
     Log.d(
         "ПЕРЕМЕННЫЕ", "packCost = $packCost, cigarettesInPack = $cigarettesInPack\n" +
                 "nonSmokedCigarettes = $nonSmokedCigarettes, daysInMonth = $daysInMonth"
     )
-    val monthMoneySpent = packCost / cigarettesInPack * nonSmokedCigarettes * daysInMonth
-    Log.d("ПЕРЕМЕННЫЕ", "monthMoneySpent = $monthMoneySpent")
+    Log.d("ПЕРЕМЕННЫЕ", "monthMoneySpent = $monthMoneySaved")
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -147,7 +145,7 @@ fun FirstMonthWithoutSmokingPage(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "$monthMoneySpent",
+                            text = "$monthMoneySaved",
                             modifier = Modifier.weight(1f),
                             style = summaryNumberTextStyle
                         )

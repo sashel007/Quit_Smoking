@@ -14,9 +14,8 @@ import ru.sashel007.quitsmoking.data.db.entity.UserData
 interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(userData: UserData): Long // Обычно возвращается ID вставленной строки
+    suspend fun insert(userData: UserData): Long
 
-    // Новый метод для синхронного получения данных пользователя
     @Query("SELECT * FROM user_data WHERE id = :userId")
     suspend fun getUserById(userId: Int): UserData
 

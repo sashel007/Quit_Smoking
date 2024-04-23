@@ -2,8 +2,11 @@ package ru.sashel007.quitsmoking.util
 
 import android.content.Context
 import android.content.SharedPreferences
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class MySharedPref(context: Context) {
+@Singleton
+class MySharedPref @Inject constructor(context: Context) {
 
     companion object {
         private const val SHARED_PREF_NAME = "ApplicationFirstLaunching"

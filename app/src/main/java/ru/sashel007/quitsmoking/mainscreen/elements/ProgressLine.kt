@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,13 +37,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.sashel007.quitsmoking.R
+import ru.sashel007.quitsmoking.data.repository.dto.SmokingStats
 
 @Composable
-fun ProgressLine() {
+fun ProgressLine(smokingStats: State<SmokingStats?>) {
     var expanded by remember { mutableStateOf(false) }
     val modifierAnimated = Modifier
         .padding(bottom = 20.dp)
         .animateContentSize(animationSpec = tween(durationMillis = 800))
+    var daysAfterCancelling = smokingStats.value?.days
+    var nonSmokedCigarettes = smokingStats.value?.nonSmokedCigarettes
+    var moneySaved = smokingStats.value?.savedMoney
+    var timeSaved = smokingStats.value?.savedTimeInMinutes
 
     Column(modifier = Modifier
         .fillMaxWidth()
@@ -72,7 +78,8 @@ fun ProgressLine() {
                         DaysPassed(
                             Modifier
                                 .width(140.dp)
-                                .height(100.dp)
+                                .height(100.dp),
+                            daysAfterCancelling
                         )
                     }
                     Spacer(Modifier.weight(1f))
@@ -80,7 +87,8 @@ fun ProgressLine() {
                         NoCigarettesSmoked(
                             Modifier
                                 .width(140.dp)
-                                .height(100.dp)
+                                .height(100.dp),
+                            nonSmokedCigarettes
                         )
                     }
                     Spacer(Modifier.weight(1f))
@@ -97,7 +105,8 @@ fun ProgressLine() {
                         MoneySaved(
                             Modifier
                                 .width(140.dp)
-                                .height(100.dp)
+                                .height(100.dp),
+                            moneySaved
                         )
                     }
                     Spacer(Modifier.weight(1f))
@@ -105,7 +114,8 @@ fun ProgressLine() {
                         TimeSaved(
                             Modifier
                                 .width(140.dp)
-                                .height(100.dp)
+                                .height(100.dp),
+                            timeSaved
                         )
                     }
                     Spacer(Modifier.weight(1f))
@@ -116,22 +126,26 @@ fun ProgressLine() {
                 DaysPassed(
                     Modifier
                         .weight(1f)
-                        .padding(8.dp)
+                        .padding(8.dp),
+                    daysAfterCancelling
                 )
                 NoCigarettesSmoked(
                     Modifier
                         .weight(1f)
-                        .padding(8.dp)
+                        .padding(8.dp),
+                    nonSmokedCigarettes
                 )
                 MoneySaved(
                     Modifier
                         .weight(1f)
-                        .padding(8.dp)
+                        .padding(8.dp),
+                    moneySaved
                 )
                 TimeSaved(
                     Modifier
                         .weight(1f)
-                        .padding(8.dp)
+                        .padding(8.dp),
+                    timeSaved
                 )
             }
         }
@@ -168,7 +182,7 @@ fun BlockText() {
 }
 
 @Composable
-fun DaysPassed(modifier: Modifier) {
+fun DaysPassed(modifier: Modifier, daysAfterCancelling: Long?) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -183,7 +197,7 @@ fun DaysPassed(modifier: Modifier) {
             contentScale = ContentScale.FillBounds
         )
         Text(
-            text = "17", fontSize = 18.sp, fontWeight = Bold
+            text = daysAfterCancelling.toString(), fontSize = 18.sp, fontWeight = Bold
         )
         Text(
             text = stringResource(R.string.days_after_cancelling),
@@ -198,7 +212,7 @@ fun DaysPassed(modifier: Modifier) {
 }
 
 @Composable
-fun NoCigarettesSmoked(modifier: Modifier) {
+fun NoCigarettesSmoked(modifier: Modifier, nonSmokedCigs: Int?) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -213,7 +227,7 @@ fun NoCigarettesSmoked(modifier: Modifier) {
             contentScale = ContentScale.FillBounds
         )
         Text(
-            text = "244", fontSize = 18.sp, fontWeight = Bold
+            text = nonSmokedCigs.toString(), fontSize = 18.sp, fontWeight = Bold
         )
         Text(
             text = stringResource(R.string.smoked_cigarettes),
@@ -228,7 +242,7 @@ fun NoCigarettesSmoked(modifier: Modifier) {
 }
 
 @Composable
-fun MoneySaved(modifier: Modifier) {
+fun MoneySaved(modifier: Modifier, moneySaved: Int?) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -243,7 +257,7 @@ fun MoneySaved(modifier: Modifier) {
             contentScale = ContentScale.FillBounds
         )
         Text(
-            text = "60 руб.", fontSize = 18.sp, fontWeight = Bold
+            text = "$moneySaved руб.", fontSize = 18.sp, fontWeight = Bold
         )
         Text(
             text = stringResource(R.string.money_saved),
@@ -258,7 +272,7 @@ fun MoneySaved(modifier: Modifier) {
 }
 
 @Composable
-fun TimeSaved(modifier: Modifier) {
+fun TimeSaved(modifier: Modifier, timeSaved: Int?) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -273,7 +287,7 @@ fun TimeSaved(modifier: Modifier) {
             contentScale = ContentScale.FillBounds
         )
         Text(
-            text = "1 д.", fontSize = 18.sp, fontWeight = Bold
+            text = "$timeSaved д.", fontSize = 18.sp, fontWeight = Bold
         )
         Text(
             text = stringResource(R.string.time_saved),
