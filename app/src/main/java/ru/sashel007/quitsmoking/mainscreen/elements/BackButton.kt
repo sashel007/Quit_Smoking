@@ -13,18 +13,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import ru.sashel007.quitsmoking.R
 
 @Composable
-fun BackButtonImage(navController: NavController) {
+fun BackButtonImage(navController: NavController, size: Dp) {
     Box(modifier = Modifier.wrapContentSize()) {
         Image(
             painter = painterResource(id = R.drawable.back_button),
             contentDescription = stringResource(R.string.back_button),
             modifier = Modifier
-                .size(32.dp) // Размер кнопки
+                .size(size)
                 .clickable {
                     navController.popBackStack()
                 }

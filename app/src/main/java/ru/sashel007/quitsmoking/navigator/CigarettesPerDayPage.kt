@@ -51,6 +51,7 @@ fun CigarettesPerDayPage(
     onClickForward: () -> Unit
 ) {
     var cigarettesCount by remember { mutableStateOf("") }
+    val buttonSize = 32.dp
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -69,7 +70,7 @@ fun CigarettesPerDayPage(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.CenterStart
             ) {
-                BackButtonImage(navController = navController)
+                BackButtonImage(navController = navController, buttonSize)
             }
 
             Spacer(modifier = Modifier.height(34.dp))

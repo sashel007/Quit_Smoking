@@ -49,6 +49,7 @@ fun CigarettesInPackPage(
     onNextClicked: () -> Unit
 ) {
     var cigarettesInPack by remember { mutableStateOf("") }
+    val backButtonSize = 32.dp
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -68,7 +69,7 @@ fun CigarettesInPackPage(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.CenterStart
             ) {
-                BackButtonImage(navController = navController)
+                BackButtonImage(navController = navController, backButtonSize)
             }
             Spacer(modifier = Modifier.height(34.dp))
 

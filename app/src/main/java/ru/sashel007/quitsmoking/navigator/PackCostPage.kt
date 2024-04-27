@@ -48,6 +48,7 @@ fun PackCostPage(
     onClickForward: () -> Unit
 ) {
     var packCost by remember { mutableStateOf("") }
+    val buttonsSize = 32.dp
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -66,7 +67,7 @@ fun PackCostPage(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.CenterStart
             ) {
-                BackButtonImage(navController = navController)
+                BackButtonImage(navController = navController, buttonsSize)
             }
             Spacer(modifier = Modifier.height(34.dp))
 

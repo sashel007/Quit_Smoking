@@ -37,8 +37,8 @@ class AchievementViewModel @Inject constructor(
     private fun startUpdatingAchievements() {
         coroutineScope.launch {
             while (true) {
-                delay(10_000)
                 updateAchievementsProgress()
+                delay(10_000)
             }
         }
     }

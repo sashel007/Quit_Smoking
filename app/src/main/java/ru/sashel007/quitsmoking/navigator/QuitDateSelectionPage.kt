@@ -2,7 +2,9 @@ package ru.sashel007.quitsmoking.navigator
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -37,13 +39,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import org.threeten.bp.LocalDate
-import org.threeten.bp.LocalTime
-import org.threeten.bp.format.DateTimeFormatter
 import ru.sashel007.quitsmoking.R
 import ru.sashel007.quitsmoking.mainscreen.elements.BackButtonImage
 import ru.sashel007.quitsmoking.ui.theme.MyTextStyles
 import ru.sashel007.quitsmoking.viewmodel.UserViewModel
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -52,16 +56,18 @@ import java.util.Locale
  *  Страница "Когда вы бросили курить?"
  */
 
+@RequiresApi(Build.VERSION_CODES.O)
+
 @Composable
 fun QuitDateSelectionPage(
     userViewModel: UserViewModel,
     navController: NavController,
     onClickForward: () -> Unit
-    ) {
-    val quitDate =
-        remember { mutableStateOf(Calendar.getInstance().time) }
-    val quitTime = remember { mutableIntStateOf(0) }
+) {
+    val quitDate = remember { mutableStateOf(LocalDate.now()) }
+    val quitTime = remember { mutableStateOf(LocalTime.now()) }
     val context = LocalContext.current
+    val buttonsSize = 32.dp
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -78,7 +84,7 @@ fun QuitDateSelectionPage(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.CenterStart
             ) {
-                BackButtonImage(navController = navController)
+                BackButtonImage(navController = navController, buttonsSize)
             }
 
             Spacer(modifier = Modifier.height(48.dp))
@@ -124,16 +130,10 @@ fun QuitDateSelectionPage(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                // Отображение текущей даты и времени
-                val currentDate = LocalDate.now()
-                val currentTime = LocalTime.now()
-                val russianLocale = Locale("ru")
-                val dateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", russianLocale)
-                val timeFormatter = DateTimeFormatter.ofPattern("HH:mm", russianLocale)
                 Text(
-                    text = "${currentDate.format(dateFormatter)} в ${
-                        currentTime.format(
-                            timeFormatter
+                    text = "${quitDate.value.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))} в ${
+                        quitTime.value.format(
+                            DateTimeFormatter.ofPattern("HH:mm")
                         )
                     }",
                     modifier = Modifier.padding(vertical = 8.dp),
@@ -153,16 +153,14 @@ fun QuitDateSelectionPage(
 
                 Button(
                     onClick = {
-                        val calendar = Calendar.getInstance()
                         DatePickerDialog(
                             context,
                             { _, year, month, dayOfMonth ->
-                                calendar.set(year, month, dayOfMonth)
-                                quitDate.value = calendar.time
+                                quitDate.value = LocalDate.of(year, month + 1, dayOfMonth)
                             },
-                            calendar.get(Calendar.YEAR),
-                            calendar.get(Calendar.MONTH),
-                            calendar.get(Calendar.DAY_OF_MONTH)
+                            quitDate.value.year,
+                            quitDate.value.monthValue - 1,
+                            quitDate.value.dayOfMonth
                         ).show()
                     },
                     shape = RoundedCornerShape(8.dp),
@@ -182,17 +180,14 @@ fun QuitDateSelectionPage(
 
                 Button(
                     onClick = {
-                        val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
-                        val currentMinute = Calendar.getInstance().get(Calendar.MINUTE)
-
                         TimePickerDialog(
                             context,
                             { _, hourOfDay, minute ->
-                                quitTime.intValue = hourOfDay * 60 + minute
+                                quitTime.value = LocalTime.of(hourOfDay, minute)
                             },
-                            currentHour,
-                            currentMinute,
-                            true  // Use 24-hour format or false for 12-hour format
+                            quitTime.value.hour,
+                            quitTime.value.minute,
+                            true
                         ).show()
                     },
                     shape = RoundedCornerShape(8.dp),
@@ -242,7 +237,7 @@ fun QuitDateSelectionPage(
 
             Button(
                 onClick = {
-                    saveQuitDetails(userViewModel, quitDate.value, quitTime.intValue)
+                    saveQuitDetails(userViewModel, quitDate.value, quitTime.value)
                     onClickForward()
                 },
                 modifier = Modifier
@@ -260,12 +255,10 @@ fun QuitDateSelectionPage(
     }
 }
 
-fun saveQuitDetails(userViewModel: UserViewModel, date: Date, timeInMinutes: Int) {
-    // Конвертация Date в милисекунлы
-    val quitDateInMillis = date.time
-    Log.d("Test_2", "$quitDateInMillis")
-
-    // Вызов ViewModel для обновления значений о времени
-    userViewModel.updateQuitTimeInMillisec(quitDateInMillis)
-//    userViewModel.updateQuitTime(timeInMinutes)
+@RequiresApi(Build.VERSION_CODES.O)
+fun saveQuitDetails(userViewModel: UserViewModel, date: LocalDate, time: LocalTime) {
+    val quitDateTime = LocalDateTime.of(date, time)
+    val quitTimeInMillis = quitDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+    Log.d("QuitDateTime", "Quit time in millis: $quitTimeInMillis")
+    userViewModel.updateQuitTimeInMillisec(quitTimeInMillis)
 }

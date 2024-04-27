@@ -35,8 +35,11 @@ class MyRepositoryImpl @Inject constructor(
     suspend fun getUserData(id: Int): UserDto {
         return try {
             val userDao = userDao.getUserById(1)
+            Log.d("FirstMonthWithoutSmokingPage", "repository: ${userDao.toDto()}")
             userDao.toDto()
         } catch (e: Exception) {
+            Log.e("FirstMonthWithoutSmokingPage", "кэтч в getUserData", e)
+            e.printStackTrace()
             UserDto(0, 0, 0, 0)
         }
     }

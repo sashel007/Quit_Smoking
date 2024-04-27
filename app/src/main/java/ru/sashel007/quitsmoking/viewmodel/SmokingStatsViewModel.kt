@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,27 +28,33 @@ import javax.inject.Inject
 class SmokingStatsViewModel @Inject constructor(
     private var repository: MyRepositoryImpl
 ) : ViewModel() {
-    private val _smokingStats = MutableLiveData<SmokingStats?>()
+    private val _smokingStats = MutableLiveData(SmokingStats(0,0,0,0,0,0))
     val smokingStats: LiveData<SmokingStats?> = _smokingStats
 
     private val _showDialogEvent = MutableLiveData<Event<Unit>>()
     val showDialogEvent: LiveData<Event<Unit>> = _showDialogEvent
 
     private val job = SupervisorJob()
-    private val coroutineScope = CoroutineScope(job + Dispatchers.IO)
+    private val coroutineScope = CoroutineScope(job + Dispatchers.Main)
 
     init {
+        firstLoadData()
         loadDataAndLoopCalculation()
+    }
+
+    private fun firstLoadData() = viewModelScope.launch {
+        val userDto = repository.getUserData(1)
+        calculateSmokingStats(userDto)
     }
 
     private fun loadDataAndLoopCalculation() {
         coroutineScope.launch {
-            val userDto = repository.getUserData(1)
             while (true) {
-                delay(10000)
+                val userDto = repository.getUserData(1)
                 calculateSmokingStats(userDto)
-                Log.d("SmokingStats_Log_UserDto", userDto.toString())
-                Log.d("SmokingStats_Log_smokingStats.value", _smokingStats.value.toString())
+                delay(10000)
+                Log.d("SmokingStats_Log", "val userDto = $userDto")
+                Log.d("SmokingStats_Log", "_smokingStats.value = ${_smokingStats.value}")
             }
         }
     }
@@ -57,7 +64,12 @@ class SmokingStatsViewModel @Inject constructor(
         val currentDateTime = LocalDateTime.now()
         val time = countTimeForTimer(localDateTime, currentDateTime)
         val days = time[0]
-        val nonSmokedCigarettes = (userDto.cigarettesPerDay * days).toInt()
+        val cigarettesPerDay = userDto.cigarettesPerDay
+        val nonSmokedCigarettes = if (days.toInt() != 0) {
+            (cigarettesPerDay * days).toInt()
+        } else {
+            cigarettesPerDay
+        }
         val packCost = userDto.packCost
         val cigarettesInPackage = userDto.cigarettesInPack
         val oneCigarettePrice = if (cigarettesInPackage != 0) {
@@ -77,6 +89,13 @@ class SmokingStatsViewModel @Inject constructor(
         updateNonSmokedCigarettesStat(nonSmokedCigarettes)
         updateSavedMoneyStat(moneySaved)
         updateDaysSavedStat(timeSaved)
+        Log.d(
+            "SmokingStats_Log",
+            "time = $time" +
+                "nonSmokedCigarettes = $nonSmokedCigarettes" +
+                "moneySaved = $moneySaved" +
+                "timeSaved = $timeSaved"
+        )
     }
 
     private fun setLocalDateTime(userDto: UserDto): LocalDateTime {
@@ -86,13 +105,14 @@ class SmokingStatsViewModel @Inject constructor(
     }
 
     private fun updateTimer(time: List<Long>) {
-        val currentStats = _smokingStats.value ?: SmokingStats(0, 0, 0, 0, 0, 0)
-        val updatedStats = currentStats.copy(
+        val currentStats = _smokingStats.value
+        val updatedStats = currentStats?.copy(
             days = time[0],
             hours = time[1],
             minutes = time[2]
         )
-        _smokingStats.postValue(updatedStats)
+        Log.d("SmokingStats_Log", "updateTimer, currentStats = $currentStats, updatedStats = $updatedStats")
+        _smokingStats.value = updatedStats
     }
 
     private fun countTimeForTimer(ldt: LocalDateTime, cdt: LocalDateTime): List<Long> {
@@ -103,21 +123,24 @@ class SmokingStatsViewModel @Inject constructor(
         return listOf(days, hours, minutes)
     }
     private fun updateNonSmokedCigarettesStat(nonSmokedCigs: Int) {
-        val currentStats = _smokingStats.value ?: SmokingStats(0, 0, 0, 0, 0, 0)
-        val updatedStats = currentStats.copy(nonSmokedCigarettes = nonSmokedCigs)
-        _smokingStats.postValue(updatedStats)
+        val currentStats = _smokingStats.value
+        val updatedStats = currentStats?.copy(nonSmokedCigarettes = nonSmokedCigs)
+        Log.d("SmokingStats_Log", "updateNonSmokedCigarettesStat, currentStats = $currentStats, updatedStats = $updatedStats")
+        _smokingStats.value = updatedStats
     }
 
     private fun updateSavedMoneyStat(moneySaved: Int) {
-        val currentStats = _smokingStats.value ?: SmokingStats(0, 0, 0, 0, 0, 0)
-        val updatedStats = currentStats.copy(savedMoney = moneySaved)
-        _smokingStats.postValue(updatedStats)
+        val currentStats = _smokingStats.value
+        val updatedStats = currentStats?.copy(savedMoney = moneySaved)
+        Log.d("SmokingStats_Log", "updateSavedMoneyStat, currentStats = $currentStats, updatedStats = $updatedStats")
+        _smokingStats.value = updatedStats
     }
 
     private fun updateDaysSavedStat(timeSaved: Int) {
-        val currentStats = _smokingStats.value ?: SmokingStats(0, 0, 0, 0, 0, 0)
-        val updatedStats = currentStats.copy(savedTimeInMinutes = timeSaved)
-        _smokingStats.postValue(updatedStats)
+        val currentStats = _smokingStats.value
+        val updatedStats = currentStats?.copy(savedTimeInMinutes = timeSaved)
+        Log.d("SmokingStats_Log", "updateDaysSavedStat, currentStats = $currentStats, updatedStats = $updatedStats")
+        _smokingStats.value = updatedStats
     }
 
     override fun onCleared() {

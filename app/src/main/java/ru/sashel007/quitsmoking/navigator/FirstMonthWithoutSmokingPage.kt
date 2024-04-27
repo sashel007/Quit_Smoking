@@ -32,6 +32,7 @@ import androidx.navigation.NavController
 import ru.sashel007.quitsmoking.R
 import ru.sashel007.quitsmoking.mainscreen.elements.BackButtonImage
 import ru.sashel007.quitsmoking.ui.theme.AppColors.violette
+import ru.sashel007.quitsmoking.ui.theme.MyTextStyles.buttonTextStyle
 import ru.sashel007.quitsmoking.ui.theme.MyTextStyles.summaryNumberTextStyle
 import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 
@@ -43,9 +44,11 @@ fun FirstMonthWithoutSmokingPage(
     userViewModel: UserViewModel,
     onClickForward: () -> Unit
 ) {
-    val currentUserData by userViewModel.userData.observeAsState()
+    userViewModel.loadDataForFirstMonthStats()
+    val currentUserData = userViewModel.userData.observeAsState().value
+    Log.d("FirstMonthWithoutSmokingPage.kt", "val currentUserData: $currentUserData")
     val cigarettesPerDay = currentUserData?.cigarettesPerDay ?: 1
-    Log.d("Level_error", "$cigarettesPerDay")
+    Log.d("FirstMonthWithoutSmokingPage", "$cigarettesPerDay")
     val packCost = currentUserData?.packCost ?: 1
     val nonSmokedCigarettes = cigarettesPerDay * 30
     val cigarettesInPack = currentUserData?.cigarettesInPack ?: 1
@@ -53,12 +56,13 @@ fun FirstMonthWithoutSmokingPage(
     val daysForOnePack = if (cigarettesPerDay > 0) cigarettesInPack / cigarettesPerDay else 1
     val packsForMonth = if (cigarettesPerDay > 0) daysInMonth / daysForOnePack else 1
     val monthMoneySaved = packCost * packsForMonth
+    val buttonSize = 32.dp
 
     Log.d(
-        "ПЕРЕМЕННЫЕ", "packCost = $packCost, cigarettesInPack = $cigarettesInPack\n" +
+        "FirstMonthWithoutSmokingPage", "packCost = $packCost, cigarettesInPack = $cigarettesInPack\n" +
                 "nonSmokedCigarettes = $nonSmokedCigarettes, daysInMonth = $daysInMonth"
     )
-    Log.d("ПЕРЕМЕННЫЕ", "monthMoneySpent = $monthMoneySaved")
+    Log.d("FirstMonthWithoutSmokingPage", "monthMoneySpent = $monthMoneySaved")
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -77,7 +81,7 @@ fun FirstMonthWithoutSmokingPage(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.CenterStart
             ) {
-                BackButtonImage(navController = navController)
+                BackButtonImage(navController = navController, buttonSize)
             }
             Spacer(modifier = Modifier.height(88.dp))
 

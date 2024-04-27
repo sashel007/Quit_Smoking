@@ -42,6 +42,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.sashel007.quitsmoking.data.db.dao.AchievementDao
 import ru.sashel007.quitsmoking.data.db.entity.AchievementData
 import ru.sashel007.quitsmoking.mainscreen.MainScreen
+import ru.sashel007.quitsmoking.mainscreen.elements.AppSettings
+import ru.sashel007.quitsmoking.mainscreen.elements.settings.CancellingTimeChoosing
 import ru.sashel007.quitsmoking.navigator.CigarettesInPackPage
 import ru.sashel007.quitsmoking.navigator.CigarettesPerDayPage
 import ru.sashel007.quitsmoking.navigator.FirstMonthWithoutSmokingPage
@@ -207,8 +209,15 @@ fun AppNavigator(
                 MainScreen(
                     userViewModel = userViewModel,
                     smokingStatsViewModel = smokingStatsViewModel,
-                    achievementViewModel = achievementViewModel
+                    achievementViewModel = achievementViewModel,
+                    navController = navController
                 )
+            }
+            composable(route = "settings") {
+                AppSettings(navController = navController)
+            }
+            composable(route = "settings_cancellingsmoking") {
+                CancellingTimeChoosing(userViewModel = userViewModel, navController = navController)
             }
         }
         if (currentPage != 7) {

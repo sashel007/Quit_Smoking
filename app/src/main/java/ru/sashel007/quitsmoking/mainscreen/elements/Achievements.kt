@@ -1,8 +1,15 @@
 package ru.sashel007.quitsmoking.mainscreen.elements
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,14 +24,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,17 +43,30 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.sashel007.quitsmoking.R
 import ru.sashel007.quitsmoking.data.repository.dto.AchievementDto
 
 @Composable
-fun Achievements(achievementsState: State<List<AchievementDto>?>) {
+fun Achievements(
+    achievementsState: State<List<AchievementDto>?>,
+    onAchievementClick: (AchievementDto) -> Unit
+) {
     val achievements by remember(achievementsState.value) {
         derivedStateOf {
             achievementsState.value
         }
+    }
+    val imageSize: Dp
+
+    var showDetail by remember { mutableStateOf<AchievementDto?>(null) }
+    if (showDetail != null) {
+        imageSize = 160.dp
+        ModalLayer(achievement = showDetail!!, onDismiss = { showDetail = null }, imageSize)
+    } else {
+        imageSize = 80.dp
     }
 
     Box(
@@ -93,7 +116,14 @@ fun Achievements(achievementsState: State<List<AchievementDto>?>) {
             ) {
                 achievements?.let {
                     items(it) { achievement ->
-                        AchievementBlock(achievement)
+                        AchievementBlock(
+                            achievement,
+                            modifier = Modifier
+                                .size(138.dp, 172.dp)
+                                .clickable { onAchievementClick(achievement) },
+                            onClick = { onAchievementClick(achievement) },
+                            imageSize
+                        )
                     }
                 }
             }
@@ -101,8 +131,77 @@ fun Achievements(achievementsState: State<List<AchievementDto>?>) {
     }
 }
 
+//@Composable
+//fun ModalLayer(achievement: AchievementDto, onDismiss: () -> Unit) {
+//    val isVisible = remember { mutableStateOf(true) }
+//
+//    Box(
+//        Modifier
+//            .fillMaxSize()
+//            .background(Color.Black.copy(alpha = 0.5f))
+//            .clickable(onClick = onDismiss),
+//        contentAlignment = Alignment.Center
+//    ) {
+//        AchievementBlock(
+//            achievement,
+//            Modifier
+//                .align(Alignment.Center)
+//                .fillMaxSize()
+//                .padding(start = 20.dp, end = 20.dp, top = 60.dp, bottom = 60.dp),
+//            onClick = onDismiss
+//        )
+//    }
+//}
+
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun AchievementBlock(achievement: AchievementDto) {
+fun ModalLayer(achievement: AchievementDto, onDismiss: () -> Unit, imageSize: Dp) {
+    val isVisible = remember { mutableStateOf(true) }
+
+    AnimatedVisibility(
+        visible = isVisible.value,
+        enter = scaleIn(animationSpec = tween(durationMillis = 300)),
+        exit = scaleOut(animationSpec = tween(durationMillis = 300)),
+        initiallyVisible = false
+    ) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f))
+                .clickable {
+                    isVisible.value = false
+                    onDismiss()
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                Modifier
+                    .size(276.dp, 344.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color.White)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }) {
+                    }
+            ) {
+                AchievementBlock(
+                    achievement = achievement,
+                    modifier = Modifier.fillMaxSize(),
+                    onClick = onDismiss,
+                    imageSize
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun AchievementBlock(
+    achievement: AchievementDto,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    imageSize: Dp
+) {
     val context = LocalContext.current
     val imageName = achievement.imageUri
     val imageResId = context.resources.getIdentifier(
@@ -110,70 +209,87 @@ fun AchievementBlock(achievement: AchievementDto) {
         "drawable",
         context.packageName
     )
-
     val progress = achievement.progressLine
     val isUnlocked = achievement.isUnlocked
     val description = achievement.name
-    val backgroundColor = if (isUnlocked) Color.White else Color.Gray.copy(alpha = 0.5f)
 
-    Box(
-        modifier = Modifier
-            .width(138.dp)
-            .height(172.dp)
-            .background(Color.Transparent)
-            .padding(start = 6.dp)
-    ) {
+    Box {
         Box(
-            modifier = Modifier
-                .width(138.dp)
-                .height(172.dp)
-                .clip(shape = RoundedCornerShape(8.dp))
-                .background(color = backgroundColor)
-                .padding(10.dp),
-            contentAlignment = Alignment.TopCenter
+            modifier
+                .background(Color.Transparent)
+                .padding(start = 6.dp)
+                .clickable(onClick = onClick)
         ) {
-            if (!isUnlocked) {
-                LinearProgressIndicator(
-                    progress = { progress / 100f },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(8.dp)
-                        .align(Alignment.BottomCenter),
-                    color = Color.Green
-                )
-            }
-            Column(
-                modifier = Modifier
-                    .border(2.dp, Color.Yellow)
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
+            Box(
+                modifier
+                    .clip(shape = RoundedCornerShape(8.dp))
+                    .background(Color.White)
+                    .padding(10.dp),
+                contentAlignment = Alignment.TopCenter
             ) {
-                Box(modifier = Modifier.border(2.dp, Color.Black)) {
-                    Image(
-                        painter = painterResource(id = imageResId),
-                        contentDescription = "Достижение_1",
+
+                Column(
+                    modifier = Modifier
+                        .border(2.dp, Color.Yellow)
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    Box(modifier = Modifier.border(2.dp, Color.Black)) {
+                        Image(
+                            painter = painterResource(id = imageResId),
+                            contentDescription = "Достижение_1",
+                            modifier = Modifier
+                                .size(if (imageSize == 160.dp) 80.dp else 80.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Text(
+                        text = description,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.Black,
                         modifier = Modifier
-                            .size(80.dp)
+                            .border(2.dp, Color.Red)
+                            .width(110.dp)
+                            .weight(1f)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(6.dp))
-
-                Text(
-                    text = description,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = Color.Black,
+            }
+            if (!isUnlocked) {
+                Box(
                     modifier = Modifier
-                        .border(2.dp, Color.Red)
-                        .width(110.dp)
-                        .weight(1f)
+                        .width(138.dp)
+                        .height(172.dp)
+                        .clip(shape = RoundedCornerShape(8.dp))
+                        .background(Color.Gray.copy(alpha = 0.8f))
+                        .padding(10.dp),
                 )
+            }
+
+            if (!isUnlocked) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(88.dp)
+                        .align(Alignment.Center)
+                        .clip(CircleShape)
+                        .background(Color.Black)
+                ) {
+                    CircularProgressIndicator(
+                        progress = { progress / 100f },
+                        modifier = Modifier
+                            .size(80.dp)
+                            .align(Alignment.Center),
+                        color = Color.Green,
+                        strokeWidth = 6.dp
+                    )
+                }
             }
         }
     }
 }
-
-
-

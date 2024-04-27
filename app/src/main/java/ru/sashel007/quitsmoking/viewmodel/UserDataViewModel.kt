@@ -29,22 +29,19 @@ class UserViewModel @Inject constructor(
 
     init {
         loadData()
-        Log.d("UserViewModel_check", "ViewModel created")
-        log()
     }
 
-    private fun log() {
-        viewModelScope.launch {
-            val loggedUserData: UserData = repository.getUserData(1).toEntity()
-            Log.d("TEST_2", "$loggedUserData")
-        }
-    }
 
     private fun loadData() {
         viewModelScope.launch {
             val loadedData = repository.getUserData(USER_ID)
-            _userData.value = loadedData
+            Log.d("FirstMonthWithoutSmokingPage.kt", "viewmodel: $loadedData")
+            _userData.postValue(loadedData)
         }
+    }
+
+    fun loadDataForFirstMonthStats() {
+        loadData()
     }
 
     fun insert(userDto: UserDto) = viewModelScope.launch {

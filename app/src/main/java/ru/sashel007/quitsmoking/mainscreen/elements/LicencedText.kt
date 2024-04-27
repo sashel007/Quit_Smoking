@@ -15,30 +15,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.sashel007.quitsmoking.R
 
 @Composable
-fun LicencedText() {
+fun LicencedText(fontSize: TextUnit, lineHeight: TextUnit, modifier: Modifier) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         Text(
             text = stringResource(R.string.licenced_text),
             textAlign = TextAlign.Center,
-            fontSize = 8.sp,
+            fontSize = fontSize,
             textDecoration = TextDecoration.None,
             letterSpacing = 0.sp,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .width(200.dp)
-                //.height(10.dp)
                 .alpha(1f),
             color = Color(red = 0.4522253f, green = 0.4522253f, blue = 0.4522253f, alpha = 1f),
             fontWeight = FontWeight.Normal,
             fontStyle = FontStyle.Normal,
+            lineHeight = lineHeight,
         )
     }
 }
