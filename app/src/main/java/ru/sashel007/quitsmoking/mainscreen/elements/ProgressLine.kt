@@ -257,12 +257,12 @@ fun MoneySaved(modifier: Modifier, moneySaved: Int?) {
             contentScale = ContentScale.FillBounds
         )
         Text(
-            text = "$moneySaved руб.", fontSize = 18.sp, fontWeight = Bold
+            text = "$moneySaved", fontSize = 18.sp, fontWeight = Bold
         )
         Text(
             text = stringResource(R.string.money_saved),
             fontSize = 12.sp,
-            textAlign = TextAlign.Center, // This centers the text
+            textAlign = TextAlign.Center,
             maxLines = 2,
             overflow = TextOverflow.Clip,
             modifier = Modifier.fillMaxWidth(),
@@ -273,6 +273,8 @@ fun MoneySaved(modifier: Modifier, moneySaved: Int?) {
 
 @Composable
 fun TimeSaved(modifier: Modifier, timeSaved: Int?) {
+    val formattedTime = timeSaved?.let { formatTimeSaved(it) } ?: "0 мин."
+
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -287,7 +289,7 @@ fun TimeSaved(modifier: Modifier, timeSaved: Int?) {
             contentScale = ContentScale.FillBounds
         )
         Text(
-            text = "$timeSaved д.", fontSize = 18.sp, fontWeight = Bold
+            text = formattedTime, fontSize = 18.sp, fontWeight = Bold
         )
         Text(
             text = stringResource(R.string.time_saved),
@@ -298,6 +300,23 @@ fun TimeSaved(modifier: Modifier, timeSaved: Int?) {
             modifier = Modifier.fillMaxWidth(),
             lineHeight = 14.sp
         )
+    }
+}
+
+fun formatTimeSaved(totalMinutes: Int): String {
+    val minutes = totalMinutes % 60
+    val totalHours = totalMinutes / 60
+    val hours = totalHours % 24
+    val days = totalHours / 24
+    val weeks = days / 7
+    val months = days / 30
+
+    return when {
+        months > 0 -> "$months мес."
+        weeks > 0 -> "$weeks нед."
+        days > 0 -> "$days д."
+        hours > 0 -> "$hours час"
+        else -> "$minutes мин."
     }
 }
 

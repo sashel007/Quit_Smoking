@@ -2,6 +2,7 @@ package ru.sashel007.quitsmoking.mainscreen.elements.settings
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -79,6 +80,7 @@ import kotlinx.coroutines.launch
 import ru.sashel007.quitsmoking.R
 import ru.sashel007.quitsmoking.mainscreen.elements.BackButtonImage
 import ru.sashel007.quitsmoking.ui.theme.MyTextStyles
+import ru.sashel007.quitsmoking.util.getTipsFromJson
 import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -155,6 +157,7 @@ fun CancellingTimeChoosing(
     ) {
 
         /** Стрелка "НАЗАД", заголовок "Настройки даты */
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -335,7 +338,7 @@ fun CancellingTimeChoosing(
                         Text(
                             "Применить",
                             fontFamily = MyTextStyles.mRobotoFontFamily,
-                            fontWeight = FontWeight.Normal,
+                            fontWeight = FontWeight.Bold,
                             letterSpacing = 1.5f.sp
                         )
                     }
@@ -358,7 +361,7 @@ fun CancellingTimeChoosing(
                         Text(
                             "Отменить",
                             fontFamily = MyTextStyles.mRobotoFontFamily,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.Normal,
                             letterSpacing = 2.sp,
                             maxLines = 1
                         )
@@ -370,21 +373,26 @@ fun CancellingTimeChoosing(
 
         Spacer(Modifier.height(10.dp))
 
-        ExpandableBox()
+        ExpandableBox(context)
 
-        SnackbarHost(hostState = snackbarHostState)
     }
 
+    Box(modifier = Modifier.wrapContentSize()) {
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter))
+    }
 }
 
 @Composable
-fun ExpandableBox() {
+fun ExpandableBox(context: Context) {
     var expanded by remember { mutableStateOf(false) }
     val rotationAngle by animateDpAsState(
         targetValue = if (expanded) 180.dp else 180.dp,
         animationSpec = tween(durationMillis = 300),
         label = ""
     )
+    val tips = remember { getTipsFromJson(context) }
 
     Column(
         modifier = Modifier
@@ -427,11 +435,11 @@ fun ExpandableBox() {
         }
         AnimatedVisibility(visible = expanded) {
             Text(
-                text = "Здесь ваш информационный текст о том, как продержаться и не закурить. Можно добавить несколько советов или методик.",
+                text = tips,
                 modifier = Modifier.padding(16.dp),
                 fontSize = 16.sp,
                 fontFamily = MyTextStyles.mRobotoFontFamily,
-                fontWeight = FontWeight.Normal,
+                fontWeight = FontWeight.Light,
                 lineHeight = 20.sp
             )
         }

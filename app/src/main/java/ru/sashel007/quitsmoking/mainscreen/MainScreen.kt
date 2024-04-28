@@ -6,11 +6,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -24,6 +26,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,12 +38,14 @@ import androidx.navigation.NavController
 import ru.sashel007.quitsmoking.data.repository.dto.AchievementDto
 import ru.sashel007.quitsmoking.mainscreen.elements.Achievements
 import ru.sashel007.quitsmoking.mainscreen.elements.Advices
+import ru.sashel007.quitsmoking.mainscreen.elements.DailyAdvice
 import ru.sashel007.quitsmoking.mainscreen.elements.LicencedText
 import ru.sashel007.quitsmoking.mainscreen.elements.ModalLayer
 import ru.sashel007.quitsmoking.mainscreen.elements.Motivation
 import ru.sashel007.quitsmoking.mainscreen.elements.MyAppBar
 import ru.sashel007.quitsmoking.mainscreen.elements.ProgressLine
 import ru.sashel007.quitsmoking.mainscreen.elements.Timer
+import ru.sashel007.quitsmoking.mainscreen.elements.YourMood
 import ru.sashel007.quitsmoking.viewmodel.AchievementViewModel
 import ru.sashel007.quitsmoking.viewmodel.SmokingStatsViewModel
 import ru.sashel007.quitsmoking.viewmodel.UserViewModel
@@ -48,7 +53,6 @@ import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScreen(
-    userViewModel: UserViewModel,
     smokingStatsViewModel: SmokingStatsViewModel,
     achievementViewModel: AchievementViewModel,
     navController: NavController
@@ -56,9 +60,11 @@ fun MainScreen(
     val smokingStats = smokingStatsViewModel.smokingStats.observeAsState()
     val scrollState = rememberLazyListState()
     val achievements = achievementViewModel.achievements.observeAsState()
+
+    var startAnimation by remember { mutableStateOf(false) }
+    val imageSize = 120.dp
     var showDetail by remember { mutableStateOf<AchievementDto?>(null) }
     val onDismiss = { showDetail = null }
-    val imageSize = 80.dp
 
     LazyColumn(state = scrollState) {
         item {
@@ -96,8 +102,15 @@ fun MainScreen(
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(32.dp, 32.dp))
                             .background(Color.White)
-                            .align(Alignment.BottomCenter)
-                    )
+                            .align(Alignment.BottomCenter),
+                        contentAlignment = Alignment.Center
+                        ) {
+                        Box(
+                            modifier = Modifier
+                                .size(width = 40.dp, height = 5.dp)
+                                .background(Color.LightGray, shape = RoundedCornerShape(50))
+                        )
+                    }
                 }
             }
         }
@@ -117,23 +130,31 @@ fun MainScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                    Achievements(achievements, onAchievementClick = { achievement ->
+                    Achievements(
+                        achievementsState = achievements,
+                        onAchievementClick = { achievement ->
                         showDetail = achievement
                     })
-                    Spacer(modifier = Modifier.height(26.dp))
-                    Motivation()
-                    Spacer(modifier = Modifier.height(26.dp))
-                    Advices()
-                    Spacer(modifier = Modifier.height(8.dp))
-                    LicencedText(8.sp, 10.sp, Modifier)
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        YourMood()
+                        DailyAdvice()
+                    }
+                    Spacer(modifier = Modifier.height(100.dp))
+
                 }
             }
         }
     }
 
     if (showDetail != null) {
-        ModalLayer(achievement = showDetail!!, onDismiss = onDismiss, imageSize)
+        ModalLayer(achievement = showDetail!!, startAnimation = startAnimation, onDismiss = onDismiss, imageSize)
     }
 }
 

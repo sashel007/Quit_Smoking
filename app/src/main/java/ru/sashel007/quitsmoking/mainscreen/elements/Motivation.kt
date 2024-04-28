@@ -108,3 +108,8 @@ fun MotivationBlock(motivationInfo: String) {
         )
     }
 }
+
+@Composable
+fun MotivationScreen() {
+
+}

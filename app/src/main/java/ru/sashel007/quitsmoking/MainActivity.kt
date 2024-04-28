@@ -42,6 +42,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.sashel007.quitsmoking.data.db.dao.AchievementDao
 import ru.sashel007.quitsmoking.data.db.entity.AchievementData
 import ru.sashel007.quitsmoking.mainscreen.MainScreen
+import ru.sashel007.quitsmoking.mainscreen.elements.AppNavigator
 import ru.sashel007.quitsmoking.mainscreen.elements.AppSettings
 import ru.sashel007.quitsmoking.mainscreen.elements.settings.CancellingTimeChoosing
 import ru.sashel007.quitsmoking.navigator.CigarettesInPackPage
@@ -102,167 +103,131 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun AppNavigator(
-    userViewModel: UserViewModel,
-    firstLaunchViewModel: FirstLaunchViewModel,
-    smokingStatsViewModel: SmokingStatsViewModel,
-    achievementViewModel: AchievementViewModel
-) {
-    val navController = rememberNavController()
-    var currentPage by remember { mutableIntStateOf(0) }
-    val appState by firstLaunchViewModel.launchState.collectAsState()
+//@RequiresApi(Build.VERSION_CODES.O)
+//@Composable
+//fun AppNavigator(
+//    userViewModel: UserViewModel,
+//    firstLaunchViewModel: FirstLaunchViewModel,
+//    smokingStatsViewModel: SmokingStatsViewModel,
+//    achievementViewModel: AchievementViewModel
+//) {
+//    val navController = rememberNavController()
+//    var currentPage by remember { mutableIntStateOf(0) }
+//    val appState by firstLaunchViewModel.launchState.collectAsState()
+//
+//    DisposableEffect(navController) {
+//        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+//            when (destination.route) {
+//                "startingPage" -> currentPage = 0
+//                "quitDateSelectionPage" -> currentPage = 1
+//                "cigarettesPerDayPage" -> currentPage = 2
+//                "cigarettesInPackPage" -> currentPage = 3
+//                "packCostPage" -> currentPage = 4
+//                "firstMonthWithoutSmokingPage" -> currentPage = 5
+//                "notificationsPage" -> currentPage = 6
+//                "mainScreen" -> currentPage = 7
+//            }
+//        }
+//        navController.addOnDestinationChangedListener(listener)
+//        onDispose {
+//            navController.removeOnDestinationChangedListener(listener)
+//        }
+//    }
+//
+//    LaunchedEffect(appState) {
+//        when (appState) {
+//            AppState.FIRST_LAUNCH -> {
+//                navController.navigate("startingPage") {
+//                    popUpTo(navController.graph.startDestinationId) {
+//                        inclusive = true
+//                    }
+//                }
+//            }
+//
+//            AppState.SUBSEQUENT_LAUNCH -> {
+//                navController.navigate("mainScreen") {
+//                    popUpTo(navController.graph.startDestinationId) {
+//                        inclusive = true
+//                    }
+//                }
+//            }
+//
+//            else -> Unit
+//        }
+//    }
+//
+//    Box(modifier = Modifier.fillMaxSize()) {
+//        NavHost(
+//            navController = navController,
+//            startDestination = "startingPage",
+//            enterTransition = { forwardTransitionAnimation() },
+//            exitTransition = { backwardTransitionAnimation() },
+//            popEnterTransition = { popForwardTransitionAnimation() },
+//            popExitTransition = { popBackwardTransitionAnimation() }
+//        ) {
+//            composable(route = "startingPage") {
+//                StartingPage {
+//                    navController.navigate("quitDateSelectionPage")
+//                }
+//            }
+//            composable(route = "quitDateSelectionPage") {
+//                QuitDateSelectionPage(
+//                    userViewModel = userViewModel,
+//                    navController = navController
+//                ) {
+//                    navController.navigate("cigarettesPerDayPage")
+//                }
+//            }
+//            composable(route = "cigarettesPerDayPage") {
+//                CigarettesPerDayPage(navController = navController, userViewModel = userViewModel) {
+//                    navController.navigate("cigarettesInPackPage")
+//                }
+//            }
+//            composable(route = "cigarettesInPackPage") {
+//                CigarettesInPackPage(navController = navController, userViewModel = userViewModel) {
+//                    navController.navigate("packCostPage")
+//                }
+//            }
+//            composable(route = "packCostPage") {
+//                PackCostPage(navController = navController, userViewModel = userViewModel) {
+//                    navController.navigate("firstMonthWithoutSmokingPage")
+//                }
+//            }
+//            composable(route = "firstMonthWithoutSmokingPage") {
+//                FirstMonthWithoutSmokingPage(
+//                    navController = navController,
+//                    userViewModel = userViewModel
+//                ) {
+//                    navController.navigate("notificationsPage")
+//                }
+//            }
+//            composable(route = "notificationsPage") {
+//                NotificationsPage {
+//                    navController.navigate("mainScreen")
+//                }
+//            }
+//            composable(route = "mainScreen") {
+//                MainScreen(
+//                    smokingStatsViewModel = smokingStatsViewModel,
+//                    achievementViewModel = achievementViewModel,
+//                    navController = navController
+//                )
+//            }
+//            composable(route = "settings") {
+//                AppSettings(navController = navController)
+//            }
+//            composable(route = "settings_cancellingsmoking") {
+//                CancellingTimeChoosing(userViewModel = userViewModel, navController = navController)
+//            }
+//        }
+//        if (currentPage != 7) {
+//            PageIndicator(
+//                currentPage = currentPage,
+//                numberOfPages = 7,
+//                Modifier.align(Alignment.BottomCenter)
+//            )
+//        }
+//    }
+//
+//}
 
-    DisposableEffect(navController) {
-        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
-            when (destination.route) {
-                "startingPage" -> currentPage = 0
-                "quitDateSelectionPage" -> currentPage = 1
-                "cigarettesPerDayPage" -> currentPage = 2
-                "cigarettesInPackPage" -> currentPage = 3
-                "packCostPage" -> currentPage = 4
-                "firstMonthWithoutSmokingPage" -> currentPage = 5
-                "notificationsPage" -> currentPage = 6
-                "mainScreen" -> currentPage = 7
-            }
-        }
-        navController.addOnDestinationChangedListener(listener)
-        onDispose {
-            navController.removeOnDestinationChangedListener(listener)
-        }
-    }
-
-    LaunchedEffect(appState) {
-        when (appState) {
-            AppState.FIRST_LAUNCH -> {
-                navController.navigate("startingPage") {
-                    popUpTo(navController.graph.startDestinationId) {
-                        inclusive = true
-                    }
-                }
-            }
-
-            AppState.SUBSEQUENT_LAUNCH -> {
-                navController.navigate("mainScreen") {
-                    popUpTo(navController.graph.startDestinationId) {
-                        inclusive = true
-                    }
-                }
-            }
-
-            else -> Unit
-        }
-    }
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        NavHost(
-            navController = navController,
-            startDestination = "startingPage",
-            enterTransition = { forwardTransitionAnimation() },
-            exitTransition = { backwardTransitionAnimation() },
-            popEnterTransition = { popForwardTransitionAnimation() },
-            popExitTransition = { popBackwardTransitionAnimation() }
-        ) {
-            composable(route = "startingPage") {
-                StartingPage {
-                    navController.navigate("quitDateSelectionPage")
-                }
-            }
-            composable(route = "quitDateSelectionPage") {
-                QuitDateSelectionPage(
-                    userViewModel = userViewModel,
-                    navController = navController
-                ) {
-                    navController.navigate("cigarettesPerDayPage")
-                }
-            }
-            composable(route = "cigarettesPerDayPage") {
-                CigarettesPerDayPage(navController = navController, userViewModel = userViewModel) {
-                    navController.navigate("cigarettesInPackPage")
-                }
-            }
-            composable(route = "cigarettesInPackPage") {
-                CigarettesInPackPage(navController = navController, userViewModel = userViewModel) {
-                    navController.navigate("packCostPage")
-                }
-            }
-            composable(route = "packCostPage") {
-                PackCostPage(navController = navController, userViewModel = userViewModel) {
-                    navController.navigate("firstMonthWithoutSmokingPage")
-                }
-            }
-            composable(route = "firstMonthWithoutSmokingPage") {
-                FirstMonthWithoutSmokingPage(
-                    navController = navController,
-                    userViewModel = userViewModel
-                ) {
-                    navController.navigate("notificationsPage")
-                }
-            }
-            composable(route = "notificationsPage") {
-                NotificationsPage {
-                    navController.navigate("mainScreen")
-                }
-            }
-            composable(route = "mainScreen") {
-                MainScreen(
-                    userViewModel = userViewModel,
-                    smokingStatsViewModel = smokingStatsViewModel,
-                    achievementViewModel = achievementViewModel,
-                    navController = navController
-                )
-            }
-            composable(route = "settings") {
-                AppSettings(navController = navController)
-            }
-            composable(route = "settings_cancellingsmoking") {
-                CancellingTimeChoosing(userViewModel = userViewModel, navController = navController)
-            }
-        }
-        if (currentPage != 7) {
-            PageIndicator(
-                currentPage = currentPage,
-                numberOfPages = 7,
-                Modifier.align(Alignment.BottomCenter)
-            )
-        }
-    }
-
-}
-
-fun forwardTransitionAnimation(): EnterTransition {
-    return fadeIn(
-        animationSpec = tween(300, easing = LinearEasing)
-    ) + slideInHorizontally(
-        animationSpec = tween(300, easing = EaseIn),
-        initialOffsetX = { fullWidth -> fullWidth / 2 }
-    )
-}
-
-fun backwardTransitionAnimation(): ExitTransition {
-    return fadeOut(
-        animationSpec = tween(300, easing = LinearEasing)
-    ) + slideOutHorizontally(
-        animationSpec = tween(300, easing = EaseOut),
-        targetOffsetX = { fullWidth -> -fullWidth / 2 }
-    )
-}
-
-// Анимация для popEnterTransition
-fun popForwardTransitionAnimation(): EnterTransition {
-    return fadeIn(animationSpec = tween(300, easing = LinearEasing)) +
-            slideInHorizontally(
-                animationSpec = tween(300, easing = EaseIn),
-                initialOffsetX = { fullWidth -> -fullWidth }
-            )
-}
-
-// Анимация для popExitTransition
-fun popBackwardTransitionAnimation(): ExitTransition {
-    return fadeOut(animationSpec = tween(300, easing = LinearEasing)) +
-            slideOutHorizontally(
-                animationSpec = tween(300, easing = EaseOut),
-                targetOffsetX = { fullWidth -> fullWidth }
-            )
-}

@@ -39,17 +39,9 @@ fun MyAppBar(navController: NavController) {
         )
         Spacer(Modifier.weight(1f))
         Image(
-            painter = painterResource(id = R.drawable.quitesmoke_share_icon),
+            painter = painterResource(id = R.drawable.quitsmoke_share_icon),
             contentDescription = stringResource(id = R.string.share),
             modifier = Modifier.size(22.dp)
-        )
-        Spacer(Modifier.width(22.dp))
-        Image(
-            painter = painterResource(id = R.drawable.settings_button_1),
-            contentDescription = stringResource(id = R.string.settings),
-            modifier = Modifier.size(28.dp).clickable {
-                navController.navigate("settings")
-            }
         )
     }
 
