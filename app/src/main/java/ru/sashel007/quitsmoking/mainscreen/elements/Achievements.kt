@@ -8,6 +8,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -22,10 +23,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,15 +51,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import ru.sashel007.quitsmoking.R
 import ru.sashel007.quitsmoking.data.repository.dto.AchievementDto
@@ -58,7 +71,8 @@ import ru.sashel007.quitsmoking.ui.theme.MyTextStyles
 @Composable
 fun Achievements(
     achievementsState: State<List<AchievementDto>?>,
-    onAchievementClick: (AchievementDto) -> Unit
+    onAchievementClick: (AchievementDto) -> Unit,
+    navController: NavController
 ) {
     val achievements by remember(achievementsState.value) {
         derivedStateOf {
@@ -69,7 +83,7 @@ fun Achievements(
     var startAnimation by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        delay(500) // Или другой подходящий способ определения видимости
+        delay(500)
         startAnimation = true
     }
 
@@ -121,14 +135,16 @@ fun Achievements(
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Normal,
                     color = Color.Black,
-                    modifier = Modifier.clickable {})
+                    modifier = Modifier.clickable {
+                        navController.navigate("achievements_list")
+                    })
             }
             LazyRow(
                 contentPadding = PaddingValues(start = 6.dp, end = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                achievements?.let {
-                    items(it) { achievement ->
+                achievements?.take(4)?.let { list ->
+                    items(list) { achievement ->
                         AchievementBlock(
                             startAnimation,
                             achievement,
@@ -140,6 +156,25 @@ fun Achievements(
                         )
                     }
                 }
+                item {
+                    Box(
+                        modifier = Modifier.height(172.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.open_all_achievs_btn),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(horizontal = 20.dp)
+                                .background(Color.Transparent, RoundedCornerShape(100.dp))
+                                .size(50.dp)
+                                .clickable {
+                                    navController.navigate("achievements_list")
+                                },
+                        )
+                    }
+
+                }
             }
         }
     }
@@ -148,10 +183,7 @@ fun Achievements(
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun ModalLayer(
-    achievement: AchievementDto,
-    startAnimation: Boolean,
-    onDismiss: () -> Unit,
-    imageSize: Dp
+    achievement: AchievementDto, startAnimation: Boolean, onDismiss: () -> Unit, imageSize: Dp
 ) {
     val isVisible = remember { mutableStateOf(true) }
 
@@ -170,15 +202,12 @@ fun ModalLayer(
                     onDismiss()
                 }, contentAlignment = Alignment.Center
         ) {
-            Box(
-                Modifier
-                    .size(276.dp, 344.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color.White)
-                    .clickable(indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    ) {}
-            ) {
+            Box(Modifier
+                .size(276.dp, 344.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.White)
+                .clickable(indication = null,
+                    interactionSource = remember { MutableInteractionSource() }) {}) {
                 AchievementBlock(
                     startAnimation = startAnimation,
                     achievement = achievement,
@@ -210,7 +239,8 @@ fun AchievementBlock(
 
     val progressAnimationValue by animateFloatAsState(
         targetValue = if (startAnimation) progress.toFloat() else 0f,
-        animationSpec = tween(900), label = ""
+        animationSpec = tween(900),
+        label = ""
     )
 
 
@@ -230,8 +260,7 @@ fun AchievementBlock(
                             red = 0.7372549f, green = 0.7372549f, blue = 0.9137255f, alpha = 1f
                         )
                     )
-                    .padding(10.dp),
-                contentAlignment = Alignment.TopCenter
+                    .padding(10.dp), contentAlignment = Alignment.TopCenter
             ) {
                 Column(
                     modifier = Modifier.fillMaxSize(),
@@ -269,7 +298,6 @@ fun AchievementBlock(
                                 start = if (imageSize == 120.dp) 20.dp else 1.dp,
                                 end = if (imageSize == 120.dp) 20.dp else 1.dp
                             )
-
                     )
                 }
 
@@ -300,8 +328,7 @@ fun AchievementBlock(
                                 .background(
                                     Brush.radialGradient(
                                         listOf(
-                                            Color(0xFF2be4dc).copy(0.5f),
-                                            Color(0xFF243484).copy(1f)
+                                            Color(0xFF2be4dc).copy(0.5f), Color(0xFF243484).copy(1f)
                                         )
                                     )
                                 )
@@ -337,9 +364,170 @@ fun AchievementBlock(
                             fontSize = if (imageSize == 120.dp) 60.sp else 24.sp,
                             color = if (imageSize == 120.dp) Color.White else Color.Black
                         )
-
                     }
+                }
+            }
+        }
+    }
+}
 
+@Composable
+fun AchievementsList(
+    navController: NavController,
+    achievements: List<AchievementDto>?,
+
+    ) {
+    val imageMap = remember {
+        mapOf(
+            "achievement_1" to R.drawable.achievement_1,
+            "achievement_2" to R.drawable.achievement_2,
+            "achievement_3" to R.drawable.achievement_3,
+            "achievement_4" to R.drawable.achievement_4,
+            "achievement_5" to R.drawable.achievement_test,
+            "achievement_6" to R.drawable.achievement_test,
+            "achievement_7" to R.drawable.achievement_test,
+            "achievement_8" to R.drawable.achievement_test,
+            "achievement_9" to R.drawable.achievement_test,
+            "achievement_10" to R.drawable.achievement_test,
+            "achievement_11" to R.drawable.achievement_test,
+            "achievement_12" to R.drawable.achievement_test,
+            "achievement_13" to R.drawable.achievement_test,
+            "achievement_14" to R.drawable.achievement_test
+        )
+    }
+    val startAnimation by remember { mutableStateOf(true) }
+
+    val lazyListState = rememberLazyListState()
+    val scrollEffects = remember(lazyListState) {
+        derivedStateOf {
+            val isScrolled = lazyListState.firstVisibleItemScrollOffset > 150 || lazyListState.firstVisibleItemIndex > 0
+            Triple(
+                if (isScrolled) Color.White else Color.Transparent, // Background color
+                if (isScrolled) RoundedCornerShape(0.dp, 0.dp, 12.dp, 12.dp) else RectangleShape, // Shape
+                if (isScrolled) 8.dp else 0.dp // Shadow elevation
+            )
+        }
+    }
+    val (backgroundColor, shape, shadowElevation) = scrollEffects.value
+
+
+    Box {
+        Column {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .shadow(elevation = shadowElevation, shape = shape)
+                    .clip(shape)
+                    .background(backgroundColor)
+            ) {
+                Box(modifier = Modifier.align(Alignment.TopStart)) {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Назад")
+                    }
+                }
+                Box(modifier = Modifier.align(Alignment.Center)) {
+                    Text(
+                        "Достижения",
+                        fontFamily = MyTextStyles.mRobotoFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 22.sp
+                    )
+                }
+            }
+
+            LazyColumn(state = lazyListState, contentPadding = PaddingValues(12.dp)) {
+                achievements?.let {
+                    itemsIndexed(it) { index, achievement ->
+                        val progress = achievement.progressLine
+                        val progressAnimationValue by animateFloatAsState(
+                            targetValue = if (startAnimation) progress.toFloat() else 0f,
+                            animationSpec = tween(900),
+                            label = ""
+                        )
+                        val imageId = imageMap[achievement.imageUri] ?: R.drawable.achievement_error
+                        val isUnlocked = achievement.isUnlocked
+                        val description = achievement.name
+
+                        if (!isUnlocked) {
+                            Row {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Image(
+                                        painter = painterResource(id = imageId),
+                                        contentDescription = "",
+                                        modifier = Modifier.size(60.dp),
+                                    )
+                                    Box(
+                                        modifier = Modifier
+                                            .size(60.dp)
+                                            .background(Color.Gray, RoundedCornerShape(100))
+                                    )
+                                    CircularProgressIndicator(
+                                        progress = progressAnimationValue / 100,
+                                        modifier = Modifier
+                                            .size(80.dp)
+                                            .align(Alignment.Center),
+                                        color = Color.Yellow,
+                                        trackColor = Color.Gray.copy(alpha = 0.8f),
+                                        strokeWidth = 12.dp,
+                                        strokeCap = StrokeCap.Round
+                                    )
+                                    Box {
+                                        Text(
+                                            text = "$progress%",
+                                            fontFamily = MyTextStyles.mRobotoFontFamily,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 24.sp,
+                                            color = Color.Black
+                                        )
+                                    }
+                                }
+                                Spacer(Modifier.width(20.dp))
+                                Text(
+                                    text = description,
+                                    fontFamily = MyTextStyles.mRobotoFontFamily,
+                                    fontWeight = FontWeight.Normal,
+                                    textAlign = TextAlign.Start,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                    softWrap = true,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                        } else {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {}
+                                    .padding(vertical = 8.dp, horizontal = 12.dp),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Image(
+                                    painter = painterResource(id = imageId),
+                                    contentDescription = "",
+                                    modifier = Modifier.size(60.dp),
+                                )
+                                Spacer(Modifier.width(20.dp))
+                                Text(
+                                    text = description,
+                                    fontFamily = MyTextStyles.mRobotoFontFamily,
+                                    fontWeight = FontWeight.Normal,
+                                    textAlign = TextAlign.Start,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                    softWrap = true,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                        }
+                        if (index < it.size - 1) {
+                            HorizontalDivider(
+                                color = Color.LightGray,
+                                thickness = 1.dp,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        }
+                    }
                 }
             }
         }

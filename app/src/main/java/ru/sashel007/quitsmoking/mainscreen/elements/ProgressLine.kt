@@ -315,7 +315,7 @@ fun formatTimeSaved(totalMinutes: Int): String {
         months > 0 -> "$months мес."
         weeks > 0 -> "$weeks нед."
         days > 0 -> "$days д."
-        hours > 0 -> "$hours час"
+        hours > 0 -> "$hours ч."
         else -> "$minutes мин."
     }
 }

@@ -1,7 +1,6 @@
-package ru.sashel007.quitsmoking.data
+package ru.sashel007.quitsmoking.data.hilt
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.util.Log
 import androidx.room.Room
 import androidx.room.RoomDatabase

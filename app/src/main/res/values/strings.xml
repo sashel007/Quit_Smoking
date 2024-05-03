@@ -36,4 +36,6 @@
     <string name="minutes_">минут</string>
     <string name="share">Поделиться</string>
     <string name="settings_meme_img">Мемная картинка \"Настройки\"</string>
+    <string name="try_breathable_practices">Попробуйте уникальные дыхательные практики по методике квадрата, нажмите \"Попробовать\" и следуйте инструкции</string>
+    <string name="square_breath">Дыхание по квадрату</string>
 </resources>

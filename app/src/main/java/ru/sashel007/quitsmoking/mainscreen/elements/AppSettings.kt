@@ -53,9 +53,6 @@ fun AppSettings(navController: NavController) {
                 .fillMaxWidth()
                 .padding(16.dp),
         ) {
-            Box(modifier = Modifier.align(Alignment.TopStart)) {
-                BackButtonImage(navController = navController, buttonSize)
-            }
             Box(modifier = Modifier.align(Alignment.Center)) {
                 Image(
                     painter = painterResource(id = R.drawable.settings_meme_img1),
@@ -99,16 +96,4 @@ fun InfoText() {
     val licencedTextSize = 10.sp
     val licencesTextLineHeight = 14.sp
     LicencedText(licencedTextSize, licencesTextLineHeight, Modifier.padding(top = 30.dp))
-}
-
-@Composable
-fun SettingsMainImage() {
-    Box() {
-//        Image(
-//            painter = painterResource(id = R.drawable.back_button),
-//            contentDescription = stringResource(R.string.back_button),
-//            modifier = Modifier
-//                .size(32.dp)
-//        )
-    }
 }

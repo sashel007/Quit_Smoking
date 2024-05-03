@@ -16,7 +16,7 @@ import ru.sashel007.quitsmoking.data.db.entity.AchievementData
 import ru.sashel007.quitsmoking.data.db.entity.UserData
 import ru.sashel007.quitsmoking.util.AchievementSerialization
 
-@Database(entities = [UserData::class, AchievementData::class], version = 7, exportSchema = false)
+@Database(entities = [UserData::class, AchievementData::class], version = 10, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun achievementDao(): AchievementDao

@@ -20,9 +20,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import ru.sashel007.quitsmoking.R
+import ru.sashel007.quitsmoking.ui.theme.MyTextStyles
 
 @Composable
-fun MyAppBar(navController: NavController) {
+fun MyAppBar() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -31,6 +32,7 @@ fun MyAppBar(navController: NavController) {
     ) {
         Text(
             text = stringResource(R.string.dont_smoke_title),
+            fontFamily = MyTextStyles.mRobotoFontFamily,
             fontWeight = FontWeight.Bold,
             fontSize = 22.sp,
             textAlign = TextAlign.Start,
@@ -41,7 +43,7 @@ fun MyAppBar(navController: NavController) {
         Image(
             painter = painterResource(id = R.drawable.quitsmoke_share_icon),
             contentDescription = stringResource(id = R.string.share),
-            modifier = Modifier.size(22.dp)
+            modifier = Modifier.size(22.dp).padding(end = 1.dp)
         )
     }
 

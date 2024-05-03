@@ -38,6 +38,7 @@ import androidx.navigation.NavController
 import ru.sashel007.quitsmoking.data.repository.dto.AchievementDto
 import ru.sashel007.quitsmoking.mainscreen.elements.Achievements
 import ru.sashel007.quitsmoking.mainscreen.elements.Advices
+import ru.sashel007.quitsmoking.mainscreen.elements.BreathScreen
 import ru.sashel007.quitsmoking.mainscreen.elements.DailyAdvice
 import ru.sashel007.quitsmoking.mainscreen.elements.LicencedText
 import ru.sashel007.quitsmoking.mainscreen.elements.ModalLayer
@@ -83,13 +84,13 @@ fun MainScreen(
                             .background(
                                 brush = Brush.verticalGradient(
                                     colors = listOf(
-                                        Color(0xFFEDB9FF), // верхний цвет - #EDB9FF
-                                        Color(0xFF7FBDF6).copy(alpha = 0.8f)  // нижний цвет - #7FBDF6 с прозрачностью 80%
+                                        Color(0xFFEDB9FF),
+                                        Color(0xFF7FBDF6).copy(alpha = 0.8f)
                                     )
                                 )
                             )
                     ) {
-                        MyAppBar(navController = navController)
+                        MyAppBar()
                         Spacer(Modifier.height(48.dp))
                         Timer(smokingStats)
                         Spacer(modifier = Modifier.height(20.dp))
@@ -104,7 +105,7 @@ fun MainScreen(
                             .background(Color.White)
                             .align(Alignment.BottomCenter),
                         contentAlignment = Alignment.Center
-                        ) {
+                    ) {
                         Box(
                             modifier = Modifier
                                 .size(width = 40.dp, height = 5.dp)
@@ -133,19 +134,23 @@ fun MainScreen(
                     Achievements(
                         achievementsState = achievements,
                         onAchievementClick = { achievement ->
-                        showDetail = achievement
-                    })
+                            showDetail = achievement
+                        },
+                        navController = navController
+                    )
                     Spacer(modifier = Modifier.height(20.dp))
 
                     Row(
                         modifier = Modifier
                             .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
+                        horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         YourMood()
                         DailyAdvice()
                     }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    BreathScreen(navController = navController)
                     Spacer(modifier = Modifier.height(100.dp))
 
                 }
@@ -154,7 +159,14 @@ fun MainScreen(
     }
 
     if (showDetail != null) {
-        ModalLayer(achievement = showDetail!!, startAnimation = startAnimation, onDismiss = onDismiss, imageSize)
+        ModalLayer(
+            achievement = showDetail!!,
+            startAnimation = startAnimation,
+            onDismiss = onDismiss,
+            imageSize
+        )
     }
+
+
 }
 
