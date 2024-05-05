@@ -410,7 +410,6 @@ fun AchievementsList(
     }
     val (backgroundColor, shape, shadowElevation) = scrollEffects.value
 
-
     Box {
         Column {
             Box(

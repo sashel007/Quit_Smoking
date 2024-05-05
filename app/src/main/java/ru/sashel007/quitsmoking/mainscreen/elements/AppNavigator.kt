@@ -159,7 +159,7 @@ fun AppNavigator(
                     navController
                 )
             }
-            composable("motivation") { MotivationScreen(statsViewModel = smokingStatsViewModel) }
+            composable("motivation") { MotivationScreen(smokingStatsViewModel, navController) }
             composable("tips") { TipsScreen() }
             composable("settings") { AppSettings(navController) }
             composable("achievements_list") {

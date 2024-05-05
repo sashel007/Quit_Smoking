@@ -4,7 +4,3 @@ data class CancelSmokingTips(
     val name: String,
     val text: String
 )
-
-data class TipsList(
-    val tips: List<CancelSmokingTips>
-)
