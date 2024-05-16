@@ -17,39 +17,30 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import ru.sashel007.quitsmoking.data.repository.dto.AchievementDto
 import ru.sashel007.quitsmoking.mainscreen.elements.Achievements
-import ru.sashel007.quitsmoking.mainscreen.elements.Advices
 import ru.sashel007.quitsmoking.mainscreen.elements.BreathScreen
-import ru.sashel007.quitsmoking.mainscreen.elements.DailyAdvice
-import ru.sashel007.quitsmoking.mainscreen.elements.LicencedText
+import ru.sashel007.quitsmoking.mainscreen.elements.DailyTip
 import ru.sashel007.quitsmoking.mainscreen.elements.ModalLayer
-import ru.sashel007.quitsmoking.mainscreen.elements.Motivation
 import ru.sashel007.quitsmoking.mainscreen.elements.MyAppBar
 import ru.sashel007.quitsmoking.mainscreen.elements.ProgressLine
 import ru.sashel007.quitsmoking.mainscreen.elements.Timer
 import ru.sashel007.quitsmoking.mainscreen.elements.YourMood
 import ru.sashel007.quitsmoking.viewmodel.AchievementViewModel
 import ru.sashel007.quitsmoking.viewmodel.SmokingStatsViewModel
-import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -147,7 +138,7 @@ fun MainScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         YourMood()
-                        DailyAdvice()
+                        DailyTip()
                     }
                     Spacer(modifier = Modifier.height(10.dp))
                     BreathScreen(navController = navController)

@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,6 +33,7 @@ import androidx.navigation.NavController
 import ru.sashel007.quitsmoking.R
 import ru.sashel007.quitsmoking.mainscreen.elements.BackButtonImage
 import ru.sashel007.quitsmoking.ui.theme.AppColors.violette
+import ru.sashel007.quitsmoking.ui.theme.MyTextStyles
 import ru.sashel007.quitsmoking.ui.theme.MyTextStyles.buttonTextStyle
 import ru.sashel007.quitsmoking.ui.theme.MyTextStyles.summaryNumberTextStyle
 import ru.sashel007.quitsmoking.viewmodel.UserViewModel
@@ -56,7 +58,7 @@ fun FirstMonthWithoutSmokingPage(
     val daysForOnePack = if (cigarettesPerDay > 0) cigarettesInPack / cigarettesPerDay else 1
     val packsForMonth = if (cigarettesPerDay > 0) daysInMonth / daysForOnePack else 1
     val monthMoneySaved = packCost * packsForMonth
-    val buttonSize = 32.dp
+    val buttonSize = 26.dp
 
     Log.d(
         "FirstMonthWithoutSmokingPage", "packCost = $packCost, cigarettesInPack = $cigarettesInPack\n" +
@@ -91,7 +93,10 @@ fun FirstMonthWithoutSmokingPage(
                 text = stringResource(id = R.string.first_month_non_smoke),
                 color = violette,
                 fontSize = 20.sp,
-                modifier = Modifier.padding(bottom = 24.dp)
+                fontFamily = MyTextStyles.mRobotoFontFamily,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 24.dp),
+                textAlign = TextAlign.Center
             )
             /** ИТОГ */
 
@@ -126,7 +131,9 @@ fun FirstMonthWithoutSmokingPage(
                             modifier = Modifier.weight(1.5f),
                             fontSize = 18.sp,
                             textAlign = TextAlign.Center,
-                            lineHeight = 16.sp
+                            lineHeight = 16.sp,
+                            fontFamily = MyTextStyles.mRobotoFontFamily,
+                            fontWeight = FontWeight.ExtraLight
                         )
                     }
                 }
@@ -158,7 +165,9 @@ fun FirstMonthWithoutSmokingPage(
                             modifier = Modifier.weight(1.5f),
                             fontSize = 18.sp,
                             textAlign = TextAlign.Center,
-                            lineHeight = 16.sp
+                            lineHeight = 16.sp,
+                            fontFamily = MyTextStyles.mRobotoFontFamily,
+                            fontWeight = FontWeight.ExtraLight
                         )
                     }
                 }
@@ -172,7 +181,9 @@ fun FirstMonthWithoutSmokingPage(
                 Box(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = stringResource(R.string.un_data),
-                        fontSize = 18.sp
+                        fontSize = 18.sp,
+                        fontFamily = MyTextStyles.mRobotoFontFamily,
+                        fontWeight = FontWeight.Normal
                     )
                 }
             }

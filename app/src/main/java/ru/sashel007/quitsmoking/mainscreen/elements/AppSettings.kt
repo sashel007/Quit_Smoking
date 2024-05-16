@@ -1,5 +1,7 @@
 package ru.sashel007.quitsmoking.mainscreen.elements
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.OverscrollEffect
 import androidx.compose.foundation.ScrollState
@@ -32,16 +34,20 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.flow.filter
 import ru.sashel007.quitsmoking.R
 import ru.sashel007.quitsmoking.mainscreen.elements.settings.CancellingSettingItem
+import ru.sashel007.quitsmoking.mainscreen.elements.settings.CancellingTimeChoosing
 import ru.sashel007.quitsmoking.mainscreen.elements.settings.LangsSettingItem
 import ru.sashel007.quitsmoking.mainscreen.elements.settings.MailToDevSettingItem
 import ru.sashel007.quitsmoking.mainscreen.elements.settings.OurCommunitySettingItem
 import ru.sashel007.quitsmoking.mainscreen.elements.settings.PolicySettingItem
 import ru.sashel007.quitsmoking.mainscreen.elements.settings.SmokingDataSettingItem
 import ru.sashel007.quitsmoking.ui.theme.MyTextStyles
+import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppSettings(navController: NavController) {
-    val buttonSize = 28.dp
+    val buttonSize = 26.dp
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,12 +84,12 @@ fun AppSettings(navController: NavController) {
         }
 
         Column {
-            CancellingSettingItem("Изменить дату отмены", navController)
-            SmokingDataSettingItem("Изменить данные о курении")
-            MailToDevSettingItem("Связаться с разработчиком")
+            CancellingSettingItem("Изменить дату бросания", navController)
+            SmokingDataSettingItem("Изменить данные о курении", navController)
+            MailToDevSettingItem("Связаться с разработчиком", navController)
             OurCommunitySettingItem("Наше сообщество")
             LangsSettingItem("Языки")
-            PolicySettingItem("Политика конфиденциальности")
+            PolicySettingItem("Политика конфиденциальности", navController)
             InfoText()
         }
     }

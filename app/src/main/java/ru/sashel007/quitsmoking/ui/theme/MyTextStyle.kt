@@ -13,48 +13,50 @@ import ru.sashel007.quitsmoking.ui.theme.AppColors.violette
 @Composable
 fun MyTextStyle() {
     TextStyle(
-        color = violette,
-        lineHeight = 16.sp
+        color = violette, lineHeight = 16.sp
     )
 }
 
 object MyTextStyles {
-    val startingLittleTextStyle = TextStyle(
-        color = violette,
-        lineHeight = 16.sp,
-        fontSize = 18.sp
-    )
-
-    val buttonTextStyle = TextStyle(
-        color = violette,
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Bold
-    )
-
-    val bigButtonTextStyle = TextStyle(
-        color = Color.White,
-        fontSize = 20.sp,
-        fontWeight = FontWeight.Bold
-    )
-
-    val numberButtonTextStyle = TextStyle(
-        color = violette,
-        fontSize = 28.sp,
-        fontWeight = FontWeight.Bold
-    )
-
-    val summaryNumberTextStyle = TextStyle(
-        color = Color.Black,
-        fontSize = 28.sp,
-        fontWeight = FontWeight.Bold
-    )
-
     val mRobotoFontFamily = FontFamily(
         Font(R.font.roboto_black, FontWeight.Black),
         Font(R.font.roboto_bold, FontWeight.Bold),
         Font(R.font.roboto_light, FontWeight.Light),
         Font(R.font.roboto_medium, FontWeight.Medium),
         Font(R.font.roboto_regular, FontWeight.Normal)
+    )
+
+    val startingLittleTextStyle = TextStyle(
+        color = violette, lineHeight = 16.sp, fontSize = 18.sp, fontFamily = mRobotoFontFamily
+    )
+
+    val buttonTextStyle = TextStyle(
+        color = violette,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Bold,
+        fontFamily = mRobotoFontFamily
+
+    )
+
+    val bigButtonTextStyle = TextStyle(
+        color = Color.White,
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+        fontFamily = mRobotoFontFamily
+    )
+
+    val numberButtonTextStyle = TextStyle(
+        color = violette,
+        fontSize = 28.sp,
+        fontWeight = FontWeight.Bold,
+        fontFamily = mRobotoFontFamily
+    )
+
+    val summaryNumberTextStyle = TextStyle(
+        color = Color.Black,
+        fontSize = 28.sp,
+        fontWeight = FontWeight.Bold,
+        fontFamily = mRobotoFontFamily
     )
 }
 

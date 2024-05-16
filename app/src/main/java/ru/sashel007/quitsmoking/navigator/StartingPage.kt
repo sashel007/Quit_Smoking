@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.sashel007.quitsmoking.R
+import ru.sashel007.quitsmoking.ui.theme.MyTextStyles
 
 @Composable
 fun StartingPage(onMoveForward: () -> Unit) {
@@ -54,10 +55,12 @@ fun StartingPage(onMoveForward: () -> Unit) {
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
                 modifier = Modifier.padding(4.dp),
+                fontFamily = MyTextStyles.mRobotoFontFamily,
             )
             Text(
                 text = "STOP SMOKING",
                 fontWeight = FontWeight.Bold,
+                fontFamily = MyTextStyles.mRobotoFontFamily,
                 fontSize = 24.sp
             )
 
@@ -75,8 +78,11 @@ fun StartingPage(onMoveForward: () -> Unit) {
             ) {
                 Text(
                     text = "Запустить",
-                    fontSize = 20.sp
-                )
+                    fontSize = 20.sp,
+                    fontFamily = MyTextStyles.mRobotoFontFamily,
+                    fontWeight = FontWeight.Normal
+
+                    )
             }
 
             Spacer(modifier = Modifier.height(8.dp))

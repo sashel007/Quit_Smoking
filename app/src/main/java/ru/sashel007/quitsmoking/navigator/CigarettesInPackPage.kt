@@ -36,20 +36,18 @@ import androidx.navigation.NavController
 import ru.sashel007.quitsmoking.R
 import ru.sashel007.quitsmoking.mainscreen.elements.BackButtonImage
 import ru.sashel007.quitsmoking.mainscreen.elements.MyCustomTextField
+import ru.sashel007.quitsmoking.ui.theme.AppColors
 import ru.sashel007.quitsmoking.ui.theme.MyTextStyles
 import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 
 /** PAGE: Сколько сигарет в одной пачке? */
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CigarettesInPackPage(
-    navController: NavController,
-    userViewModel: UserViewModel,
-    onNextClicked: () -> Unit
+    navController: NavController, userViewModel: UserViewModel, onNextClicked: () -> Unit
 ) {
     var cigarettesInPack by remember { mutableStateOf("") }
-    val backButtonSize = 32.dp
+    val backButtonSize = 26.dp
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -66,8 +64,7 @@ fun CigarettesInPackPage(
             /**  Стрелка "НАЗАД" */
 
             Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.CenterStart
+                modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterStart
             ) {
                 BackButtonImage(navController = navController, backButtonSize)
             }
@@ -76,12 +73,10 @@ fun CigarettesInPackPage(
             /** КАРТИНКА */
 
             Box(
-                contentAlignment = Alignment.TopCenter,
-                modifier = Modifier.fillMaxWidth()
+                contentAlignment = Alignment.TopCenter, modifier = Modifier.fillMaxWidth()
             ) {
                 Image(
-                    modifier = Modifier
-                        .size(120.dp),
+                    modifier = Modifier.size(120.dp),
                     painter = painterResource(id = R.drawable.cigarette_package),
                     contentDescription = "Пачка сигарет",
                 )
@@ -101,10 +96,8 @@ fun CigarettesInPackPage(
             MyCustomTextField(
                 value = cigarettesInPack,
                 onValueChange = { newValue ->
-                    cigarettesInPack = if (cigarettesInPack == "") {
-                        newValue
-                    } else {
-                        cigarettesInPack + newValue
+                    if (newValue.length <= 3 && newValue.all { it.isDigit() }) {
+                        cigarettesInPack = newValue
                     }
                 },
                 label = { Text(stringResource(id = R.string.cigarettes_in_package_short)) }
@@ -126,7 +119,7 @@ fun CigarettesInPackPage(
                 shape = RoundedCornerShape(8.dp),
                 enabled = cigarettesInPack != "",
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (cigarettesInPack != "" && cigarettesInPack.isNotEmpty()) Color.Blue else Color.Gray
+                    containerColor = if (cigarettesInPack != "" && cigarettesInPack.isNotEmpty()) AppColors.violette else Color.Gray
                 )
             ) {
                 Text(
@@ -175,8 +168,7 @@ fun CigarettesInPackPage(
                                     ) {
                                         Icon(
                                             painter = painterResource(id = R.drawable.back_button), // Убедитесь, что ресурс существует
-                                            contentDescription = "Удалить",
-                                            tint = Color.Black
+                                            contentDescription = "Удалить", tint = Color.Black
                                         )
                                     }
                                 }
@@ -194,9 +186,7 @@ fun CigarettesInPackPage(
                                     // Кнопка с числом 0
                                     Button(
                                         onClick = {
-                                            if (cigarettesInPack == "0") {
-                                                cigarettesInPack = number.toString()
-                                            } else {
+                                            if (cigarettesInPack.length < 3) {
                                                 cigarettesInPack += number.toString()
                                             }
                                         },
@@ -204,7 +194,11 @@ fun CigarettesInPackPage(
                                             .weight(1f)
                                             .height(48.dp),
                                         shape = RoundedCornerShape(8.dp),
-                                        colors = ButtonDefaults.buttonColors(Color.Transparent)
+                                        enabled = cigarettesInPack != "",
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Color.Transparent,
+                                            disabledContainerColor = Color.Transparent
+                                        )
                                     ) {
                                         Text(
                                             text = number.toString(),
@@ -217,9 +211,7 @@ fun CigarettesInPackPage(
                                     // Кнопки с числами от 1 до 9
                                     Button(
                                         onClick = {
-                                            if (cigarettesInPack == "0") {
-                                                cigarettesInPack = number.toString()
-                                            } else {
+                                            if (cigarettesInPack.length < 3) {
                                                 cigarettesInPack += number.toString()
                                             }
                                         },
@@ -228,8 +220,8 @@ fun CigarettesInPackPage(
                                             .height(48.dp),
                                         shape = RoundedCornerShape(8.dp),
                                         colors = ButtonDefaults.buttonColors(
-                                            containerColor = Color.White, // Цвет фона кнопки в нормальном состоянии
-                                            contentColor = Color.White // Цвет контента (текст, иконка) кнопки
+                                            containerColor = Color.White,
+                                            contentColor = Color.White
                                         )
                                     ) {
                                         Text(

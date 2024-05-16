@@ -158,8 +158,7 @@ fun Achievements(
                 }
                 item {
                     Box(
-                        modifier = Modifier.height(172.dp),
-                        contentAlignment = Alignment.Center
+                        modifier = Modifier.height(172.dp), contentAlignment = Alignment.Center
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.open_all_achievs_btn),
@@ -375,8 +374,7 @@ fun AchievementBlock(
 fun AchievementsList(
     navController: NavController,
     achievements: List<AchievementDto>?,
-
-    ) {
+) {
     val imageMap = remember {
         mapOf(
             "achievement_1" to R.drawable.achievement_1,
@@ -400,10 +398,13 @@ fun AchievementsList(
     val lazyListState = rememberLazyListState()
     val scrollEffects = remember(lazyListState) {
         derivedStateOf {
-            val isScrolled = lazyListState.firstVisibleItemScrollOffset > 150 || lazyListState.firstVisibleItemIndex > 0
+            val isScrolled =
+                lazyListState.firstVisibleItemScrollOffset > 150 || lazyListState.firstVisibleItemIndex > 0
             Triple(
                 if (isScrolled) Color.White else Color.Transparent, // Background color
-                if (isScrolled) RoundedCornerShape(0.dp, 0.dp, 12.dp, 12.dp) else RectangleShape, // Shape
+                if (isScrolled) RoundedCornerShape(
+                    0.dp, 0.dp, 12.dp, 12.dp
+                ) else RectangleShape, // Shape
                 if (isScrolled) 8.dp else 0.dp // Shadow elevation
             )
         }
@@ -493,14 +494,12 @@ fun AchievementsList(
                                 )
                             }
                         } else {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {}
-                                    .padding(vertical = 8.dp, horizontal = 12.dp),
+                            Row(modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {}
+                                .padding(vertical = 8.dp, horizontal = 12.dp),
                                 horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
+                                verticalAlignment = Alignment.CenterVertically) {
                                 Image(
                                     painter = painterResource(id = imageId),
                                     contentDescription = "",

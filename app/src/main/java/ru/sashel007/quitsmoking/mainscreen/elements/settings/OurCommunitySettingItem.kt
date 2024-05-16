@@ -10,7 +10,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,11 +38,13 @@ fun OurCommunitySettingItem(title: String) {
 
 @Composable
 fun OurCommunitySettingItemImageButton(text: String) {
+    var showDialog by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .width(360.dp)
             .padding(start = 24.dp, end = 24.dp, top = 12.dp, bottom = 6.dp)
-            .clickable {},
+            .clickable { showDialog = true },
         contentAlignment = Alignment.Center
     ) {
         Image(
@@ -59,5 +67,37 @@ fun OurCommunitySettingItemImageButton(text: String) {
                 lineHeight = 20.sp
             )
         }
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = {
+                Text(
+                    text = "Сообщество",
+                    fontFamily = MyTextStyles.mRobotoFontFamily,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Text(
+                    text = "Наше сообщество находится в разработке. После запуска сообщества вы получите уведомление.",
+                    fontFamily = MyTextStyles.mRobotoFontFamily,
+                    fontWeight = FontWeight.Light,
+                    fontSize = 18.sp
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { showDialog = false }
+                ) {
+                    Text("ОК",
+                        fontFamily = MyTextStyles.mRobotoFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
+                }
+            }
+        )
     }
 }

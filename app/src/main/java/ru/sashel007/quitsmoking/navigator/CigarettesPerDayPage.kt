@@ -1,9 +1,7 @@
 package ru.sashel007.quitsmoking.navigator
 
 import android.util.Log
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -34,11 +32,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ru.sashel007.quitsmoking.R
 import ru.sashel007.quitsmoking.mainscreen.elements.BackButtonImage
 import ru.sashel007.quitsmoking.mainscreen.elements.MyCustomTextField
+import ru.sashel007.quitsmoking.ui.theme.AppColors
 import ru.sashel007.quitsmoking.ui.theme.MyTextStyles
 import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 
@@ -51,7 +49,7 @@ fun CigarettesPerDayPage(
     onClickForward: () -> Unit
 ) {
     var cigarettesCount by remember { mutableStateOf("") }
-    val buttonSize = 32.dp
+    val buttonSize = 26.dp
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -104,7 +102,9 @@ fun CigarettesPerDayPage(
             MyCustomTextField(
                 value = cigarettesCount,
                 onValueChange = { newValue ->
-                    cigarettesCount = newValue
+                    if (newValue.length <= 3 && newValue.all { it.isDigit() }) {
+                        cigarettesCount = newValue
+                    }
                 },
                 label = { Text(stringResource(id = R.string.cigarettes_amount)) }
             )
@@ -132,7 +132,7 @@ fun CigarettesPerDayPage(
                 shape = RoundedCornerShape(8.dp),
                 enabled = cigarettesCount != "", // Кнопка активна когда есть текст
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (cigarettesCount != "" && cigarettesCount.isNotEmpty()) Color.Blue else Color.Gray
+                    containerColor = if (cigarettesCount != "" && cigarettesCount.isNotEmpty()) AppColors.violette else Color.Gray
                 )
             ) {
                 Text(
@@ -144,7 +144,6 @@ fun CigarettesPerDayPage(
             Spacer(
                 modifier = Modifier
                     .height(32.dp)
-                    .weight(1f)
             )
 
             /** КЛАВИАТУРА */
@@ -217,12 +216,11 @@ fun CigarettesPerDayPage(
                                     // Кнопка с числом 0
                                     Button(
                                         onClick = {
-                                            if (cigarettesCount == "0") {
-                                                cigarettesCount = number.toString()
-                                            } else {
+                                            if (cigarettesCount.length < 3) {
                                                 cigarettesCount += number.toString()
                                             }
                                         },
+                                        enabled = cigarettesCount != "",
                                         modifier = Modifier
                                             .weight(1f)
                                             .height(48.dp)
@@ -235,7 +233,10 @@ fun CigarettesPerDayPage(
                                             ),
                                         shape = RoundedCornerShape(8.dp),
                                         interactionSource = interactionSource,
-                                        colors = ButtonDefaults.buttonColors(Color.Transparent)
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Color.Transparent,
+                                            disabledContainerColor = Color.Transparent
+                                        )
                                     ) {
                                         Text(
                                             text = number.toString(),
@@ -248,9 +249,7 @@ fun CigarettesPerDayPage(
                                     // Кнопки с числами от 1 до 9
                                     Button(
                                         onClick = {
-                                            if (cigarettesCount == "0") {
-                                                cigarettesCount = number.toString()
-                                            } else {
+                                            if (cigarettesCount.length < 3) {
                                                 cigarettesCount += number.toString()
                                             }
                                         },

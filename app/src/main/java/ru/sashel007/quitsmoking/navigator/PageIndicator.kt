@@ -23,7 +23,7 @@ fun PageIndicator(currentPage: Int, numberOfPages: Int, modifier: Modifier = Mod
         modifier = modifier
     ) {
         for (i in 0 until numberOfPages) {
-            Spacer(modifier = Modifier.width(4.dp).padding(15.dp))  // For spacing between dots
+            Spacer(modifier = Modifier.width(4.dp).padding(15.dp))
             Box(
                 modifier = Modifier.size(8.dp)
                     .background(

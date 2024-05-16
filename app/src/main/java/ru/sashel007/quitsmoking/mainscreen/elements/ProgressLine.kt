@@ -197,12 +197,12 @@ fun DaysPassed(modifier: Modifier, daysAfterCancelling: Long?) {
             contentScale = ContentScale.FillBounds
         )
         Text(
-            text = daysAfterCancelling.toString(), fontSize = 18.sp, fontWeight = Bold
+            text = formatNumber(daysAfterCancelling), fontSize = 18.sp, fontWeight = Bold
         )
         Text(
             text = stringResource(R.string.days_after_cancelling),
             fontSize = 12.sp,
-            textAlign = TextAlign.Center, // This centers the text
+            textAlign = TextAlign.Center,
             maxLines = 2,
             overflow = TextOverflow.Clip,
             modifier = Modifier.fillMaxWidth(),
@@ -310,8 +310,10 @@ fun formatTimeSaved(totalMinutes: Int): String {
     val days = totalHours / 24
     val weeks = days / 7
     val months = days / 30
+    val years = days / 365
 
     return when {
+        years > 0 -> "$years г."
         months > 0 -> "$months мес."
         weeks > 0 -> "$weeks нед."
         days > 0 -> "$days д."
@@ -319,6 +321,15 @@ fun formatTimeSaved(totalMinutes: Int): String {
         else -> "$minutes мин."
     }
 }
+
+fun formatNumber(number: Long?): String {
+    return when {
+        number == null -> "0"
+        number > 9999 -> "${number / 10000} тыс."
+        else -> number.toString()
+    }
+}
+
 
 @Composable
 fun ExpandText(expanded: Boolean) {

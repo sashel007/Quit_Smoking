@@ -35,6 +35,7 @@ import androidx.navigation.NavController
 import ru.sashel007.quitsmoking.R
 import ru.sashel007.quitsmoking.mainscreen.elements.BackButtonImage
 import ru.sashel007.quitsmoking.mainscreen.elements.MyCustomTextField
+import ru.sashel007.quitsmoking.ui.theme.AppColors
 import ru.sashel007.quitsmoking.ui.theme.MyTextStyles
 import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 
@@ -48,7 +49,7 @@ fun PackCostPage(
     onClickForward: () -> Unit
 ) {
     var packCost by remember { mutableStateOf("") }
-    val buttonsSize = 32.dp
+    val buttonsSize = 26.dp
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -105,7 +106,7 @@ fun PackCostPage(
                 },
                 label = { Text(stringResource(id = R.string.one_pack_price)) }
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             /** ДАЛЕЕ */
             Button(
@@ -121,7 +122,7 @@ fun PackCostPage(
                 shape = RoundedCornerShape(8.dp),
                 enabled = packCost != "",
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (packCost != "" && packCost.isNotEmpty()) Color.Blue else Color.Gray
+                    containerColor = if (packCost != "" && packCost.isNotEmpty()) AppColors.violette else Color.Gray
                 )
             ) {
                 Text(
@@ -189,17 +190,19 @@ fun PackCostPage(
                                     // Кнопка с числом 0
                                     Button(
                                         onClick = {
-                                            if (packCost == "0") {
-                                                packCost = number.toString()
-                                            } else {
+                                            if (packCost.length < 3) {
                                                 packCost += number.toString()
                                             }
                                         },
+                                        enabled = packCost != "",
                                         modifier = Modifier
                                             .weight(1f)
                                             .height(48.dp),
                                         shape = RoundedCornerShape(8.dp),
-                                        colors = ButtonDefaults.buttonColors(Color.Transparent)
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Color.Transparent,
+                                            disabledContainerColor = Color.Transparent
+                                        )
                                     ) {
                                         Text(
                                             text = number.toString(),
@@ -212,9 +215,7 @@ fun PackCostPage(
                                     // Кнопки с числами от 1 до 9
                                     Button(
                                         onClick = {
-                                            if (packCost == "0") {
-                                                packCost = number.toString()
-                                            } else {
+                                            if (packCost.length < 3) {
                                                 packCost += number.toString()
                                             }
                                         },

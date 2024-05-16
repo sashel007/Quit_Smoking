@@ -69,6 +69,15 @@ fun QuitDateSelectionPage(
     val context = LocalContext.current
     val buttonsSize = 32.dp
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun saveQuitDetails(date: LocalDate, time: LocalTime) {
+        val quitDateTime = LocalDateTime.of(date, time)
+        val quitTimeInMillis =
+            quitDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        Log.d("QuitDateTime", "Quit time in millis: $quitTimeInMillis")
+        userViewModel.updateQuitTimeInMillisec(quitTimeInMillis)
+    }
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.TopCenter,
@@ -110,6 +119,7 @@ fun QuitDateSelectionPage(
                 Text(
                     text = stringResource(id = R.string.quite_smoking),
                     fontWeight = FontWeight.Bold,
+                    fontFamily = MyTextStyles.mRobotoFontFamily,
                     fontSize = 33.sp,
                     lineHeight = 28.sp,
                     modifier = Modifier.padding(vertical = 8.dp),
@@ -123,6 +133,7 @@ fun QuitDateSelectionPage(
                 maxLines = 2,
                 modifier = Modifier.padding(vertical = 8.dp),
                 textAlign = TextAlign.Center,
+                fontFamily = MyTextStyles.mRobotoFontFamily,
                 style = MyTextStyles.startingLittleTextStyle
             )
 
@@ -153,7 +164,7 @@ fun QuitDateSelectionPage(
 
                 Button(
                     onClick = {
-                        DatePickerDialog(
+                        val datePickerDialog = DatePickerDialog(
                             context,
                             { _, year, month, dayOfMonth ->
                                 quitDate.value = LocalDate.of(year, month + 1, dayOfMonth)
@@ -161,7 +172,21 @@ fun QuitDateSelectionPage(
                             quitDate.value.year,
                             quitDate.value.monthValue - 1,
                             quitDate.value.dayOfMonth
-                        ).show()
+                        )
+                        datePickerDialog.datePicker.apply {
+                            val minDateCalendar = Calendar.getInstance().apply {
+                                set(
+                                    1940,
+                                    Calendar.JANUARY,
+                                    1
+                                )  // Устанавливаем минимальную дату 1 января 1940 года
+                            }
+                            val maxDateCalendar =
+                                Calendar.getInstance()  // Максимальная дата сегодня
+                            minDate = minDateCalendar.timeInMillis
+                            maxDate = maxDateCalendar.timeInMillis
+                        }
+                        datePickerDialog.show()
                     },
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -183,7 +208,15 @@ fun QuitDateSelectionPage(
                         TimePickerDialog(
                             context,
                             { _, hourOfDay, minute ->
-                                quitTime.value = LocalTime.of(hourOfDay, minute)
+                                val selectedTime = LocalTime.of(hourOfDay, minute)
+                                val currentDateTime = LocalDateTime.now()
+                                val selectedDateTime = LocalDateTime.of(quitDate.value, selectedTime)
+
+                                if (selectedDateTime.isBefore(currentDateTime) || selectedDateTime.isEqual(currentDateTime)) {
+                                    quitTime.value = selectedTime
+                                } else {
+                                    // Вывести сообщение пользователю о недопустимом времени
+                                }
                             },
                             quitTime.value.hour,
                             quitTime.value.minute,
@@ -213,7 +246,11 @@ fun QuitDateSelectionPage(
                     .padding(top = 16.dp)
             ) {
                 Button(
-                    onClick = { TODO() },
+                    onClick = {
+                        quitDate.value = LocalDate.now()
+                        quitTime.value = LocalTime.now()
+                        saveQuitDetails(quitDate.value, quitTime.value)
+                    },
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Transparent,
@@ -237,7 +274,7 @@ fun QuitDateSelectionPage(
 
             Button(
                 onClick = {
-                    saveQuitDetails(userViewModel, quitDate.value, quitTime.value)
+                    saveQuitDetails(quitDate.value, quitTime.value)
                     onClickForward()
                 },
                 modifier = Modifier
@@ -253,12 +290,8 @@ fun QuitDateSelectionPage(
             }
         }
     }
+
+
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-fun saveQuitDetails(userViewModel: UserViewModel, date: LocalDate, time: LocalTime) {
-    val quitDateTime = LocalDateTime.of(date, time)
-    val quitTimeInMillis = quitDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-    Log.d("QuitDateTime", "Quit time in millis: $quitTimeInMillis")
-    userViewModel.updateQuitTimeInMillisec(quitTimeInMillis)
-}
+
