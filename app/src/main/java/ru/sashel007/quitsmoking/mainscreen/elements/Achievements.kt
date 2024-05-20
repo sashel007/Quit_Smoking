@@ -8,7 +8,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +16,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,7 +28,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -90,7 +89,7 @@ fun Achievements(
     var showDetail by remember { mutableStateOf<AchievementDto?>(null) }
     if (showDetail != null) {
         imageSize = 160.dp
-        ModalLayer(
+        AchievementModalLayer(
             achievement = showDetail!!,
             startAnimation = startAnimation,
             onDismiss = { showDetail = null },
@@ -149,7 +148,7 @@ fun Achievements(
                             startAnimation,
                             achievement,
                             modifier = Modifier
-                                .size(160.dp, 172.dp)
+                                .size(160.dp, 220.dp)
                                 .clickable { onAchievementClick(achievement) },
                             onClick = { onAchievementClick(achievement) },
                             imageSize
@@ -181,7 +180,7 @@ fun Achievements(
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun ModalLayer(
+fun AchievementModalLayer(
     achievement: AchievementDto, startAnimation: Boolean, onDismiss: () -> Unit, imageSize: Dp
 ) {
     val isVisible = remember { mutableStateOf(true) }
@@ -204,7 +203,7 @@ fun ModalLayer(
             Box(Modifier
                 .size(276.dp, 344.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(Color.White)
+                .background(Color.Transparent)
                 .clickable(indication = null,
                     interactionSource = remember { MutableInteractionSource() }) {}) {
                 AchievementBlock(
@@ -234,14 +233,14 @@ fun AchievementBlock(
     )
     val progress = achievement.progressLine
     val isUnlocked = achievement.isUnlocked
-    val description = achievement.name
+    val achievName = achievement.name
+    val achievDescription = achievement.description
 
     val progressAnimationValue by animateFloatAsState(
         targetValue = if (startAnimation) progress.toFloat() else 0f,
         animationSpec = tween(900),
         label = ""
     )
-
 
     Box {
         Box(
@@ -253,11 +252,12 @@ fun AchievementBlock(
             Box(
                 modifier
                     .clip(shape = RoundedCornerShape(8.dp))
-                    .shadow(elevation = 4.dp, shape = RoundedCornerShape(8.dp))
+                    .shadow(
+                        elevation = if (imageSize == 120.dp) 0.dp else 4.dp,
+                        shape = RoundedCornerShape(8.dp)
+                    )
                     .background(
-                        Color(
-                            red = 0.7372549f, green = 0.7372549f, blue = 0.9137255f, alpha = 1f
-                        )
+                        if (imageSize == 120.dp) Color.Transparent else Color(0xFFFDE2FF)
                     )
                     .padding(10.dp), contentAlignment = Alignment.TopCenter
             ) {
@@ -266,7 +266,6 @@ fun AchievementBlock(
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
                     Box {
                         Image(
                             painter = painterResource(id = imageResId),
@@ -277,35 +276,52 @@ fun AchievementBlock(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(6.dp))
-
                     Text(
-                        text = description,
+                        text = achievName,
                         fontFamily = MyTextStyles.mRobotoFontFamily,
-                        fontWeight = FontWeight.Light,
-                        fontSize = if (imageSize == 120.dp) 26.sp else 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = if (imageSize == 120.dp) 26.sp else 20.sp,
                         lineHeight = if (imageSize == 120.dp) 28.sp else 16.sp,
                         maxLines = if (imageSize == 120.dp) 10 else 4,
                         overflow = TextOverflow.Ellipsis,
                         softWrap = true,
-                        color = Color.Black,
+                        textAlign = TextAlign.Center,
+                        color = if (imageSize == 120.dp) Color.White else Color.Black,
                         modifier = Modifier
                             .width(if (imageSize == 120.dp) 300.dp else 160.dp)
-                            .weight(1f)
                             .padding(
                                 top = if (imageSize == 120.dp) 20.dp else 6.dp,
                                 start = if (imageSize == 120.dp) 20.dp else 1.dp,
                                 end = if (imageSize == 120.dp) 20.dp else 1.dp
                             )
                     )
+                    Text(
+                        text = achievDescription,
+                        fontFamily = MyTextStyles.mRobotoFontFamily,
+                        fontWeight = if (imageSize == 120.dp) FontWeight.Normal else FontWeight.Light,
+                        fontSize = if (imageSize == 120.dp) 26.sp else 14.sp,
+                        maxLines = if (imageSize == 120.dp) 5 else 3,
+                        lineHeight = if (imageSize == 120.dp) 24.sp else 18.sp,
+                        overflow = TextOverflow.Ellipsis,
+                        softWrap = true,
+                        color = if (imageSize == 120.dp) Color.White else Color.Black,
+                        modifier = Modifier
+                            .width(if (imageSize == 120.dp) 300.dp else 160.dp)
+                            .weight(1f)
+                            .padding(
+                                start = if (imageSize == 120.dp) 20.dp else 1.dp,
+                                end = if (imageSize == 120.dp) 20.dp else 1.dp
+                            ),
+                        textAlign = if (imageSize == 120.dp) TextAlign.Center else TextAlign.Start
+                    )
                 }
-
             }
+
             if (!isUnlocked) {
                 Box(
                     modifier = Modifier
                         .width(if (imageSize == 120.dp) 276.dp else 160.dp)
-                        .height(if (imageSize == 120.dp) 344.dp else 172.dp)
+                        .height(if (imageSize == 120.dp) 344.dp else 220.dp)
                         .clip(shape = RoundedCornerShape(8.dp))
                         .background(Color.LightGray.copy(alpha = 0.6f))
                         .padding(10.dp),
@@ -381,16 +397,38 @@ fun AchievementsList(
             "achievement_2" to R.drawable.achievement_2,
             "achievement_3" to R.drawable.achievement_3,
             "achievement_4" to R.drawable.achievement_4,
-            "achievement_5" to R.drawable.achievement_test,
-            "achievement_6" to R.drawable.achievement_test,
-            "achievement_7" to R.drawable.achievement_test,
-            "achievement_8" to R.drawable.achievement_test,
-            "achievement_9" to R.drawable.achievement_test,
-            "achievement_10" to R.drawable.achievement_test,
-            "achievement_11" to R.drawable.achievement_test,
-            "achievement_12" to R.drawable.achievement_test,
-            "achievement_13" to R.drawable.achievement_test,
-            "achievement_14" to R.drawable.achievement_test
+            "achievement_5" to R.drawable.achievement_5,
+            "achievement_6" to R.drawable.achievement_6,
+            "achievement_7" to R.drawable.achievement_7,
+            "achievement_8" to R.drawable.achievement_8,
+            "achievement_9" to R.drawable.achievement_9,
+            "achievement_10" to R.drawable.achievement_10,
+            "achievement_11" to R.drawable.achievement_11,
+            "achievement_12" to R.drawable.achievement_12,
+            "achievement_13" to R.drawable.achievement_13,
+            "achievement_14" to R.drawable.achievement_14,
+            "achievement_15" to R.drawable.achievement_15,
+            "achievement_16" to R.drawable.achievement_16,
+            "achievement_17" to R.drawable.achievement_17,
+            "achievement_18" to R.drawable.achievement_18,
+            "achievement_19" to R.drawable.achievement_19,
+            "achievement_20" to R.drawable.achievement_20,
+            "achievement_21" to R.drawable.achievement_21,
+            "achievement_22" to R.drawable.achievement_22,
+            "achievement_23" to R.drawable.achievement_23,
+            "achievement_24" to R.drawable.achievement_24,
+            "achievement_25" to R.drawable.achievement_25,
+            "achievement_26" to R.drawable.achievement_26,
+            "achievement_27" to R.drawable.achievement_27,
+            "achievement_28" to R.drawable.achievement_28,
+            "achievement_29" to R.drawable.achievement_29,
+            "achievement_30" to R.drawable.achievement_30,
+            "achievement_31" to R.drawable.achievement_31,
+            "achievement_32" to R.drawable.achievement_32,
+            "achievement_33" to R.drawable.achievement_33,
+            "achievement_34" to R.drawable.achievement_34,
+            "achievement_35" to R.drawable.achievement_35
+
         )
     }
     val startAnimation by remember { mutableStateOf(true) }
@@ -410,6 +448,10 @@ fun AchievementsList(
         }
     }
     val (backgroundColor, shape, shadowElevation) = scrollEffects.value
+
+    var modalWindow by remember { mutableStateOf<AchievementDto?>(null) }
+
+
 
     Box {
         Column {
@@ -446,10 +488,14 @@ fun AchievementsList(
                         )
                         val imageId = imageMap[achievement.imageUri] ?: R.drawable.achievement_error
                         val isUnlocked = achievement.isUnlocked
-                        val description = achievement.name
+                        val name = achievement.name
+                        val description = achievement.description
 
                         if (!isUnlocked) {
-                            Row {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .clickable { modalWindow = achievement }) {
                                 Box(contentAlignment = Alignment.Center) {
                                     Image(
                                         painter = painterResource(id = imageId),
@@ -481,22 +527,37 @@ fun AchievementsList(
                                         )
                                     }
                                 }
+
                                 Spacer(Modifier.width(20.dp))
-                                Text(
-                                    text = description,
-                                    fontFamily = MyTextStyles.mRobotoFontFamily,
-                                    fontWeight = FontWeight.Normal,
-                                    textAlign = TextAlign.Start,
-                                    maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis,
-                                    softWrap = true,
-                                    modifier = Modifier.weight(1f)
-                                )
+
+                                Column(modifier = Modifier.fillMaxHeight()) {
+                                    Text(
+                                        text = name,
+                                        fontSize = 18.sp,
+                                        fontFamily = MyTextStyles.mRobotoFontFamily,
+                                        fontWeight = FontWeight.Normal,
+                                        textAlign = TextAlign.Start,
+                                        maxLines = 2,
+                                        overflow = TextOverflow.Ellipsis,
+                                        softWrap = true,
+                                        modifier = Modifier.padding(bottom = 4.dp)
+                                    )
+                                    Text(
+                                        text = description,
+                                        fontFamily = MyTextStyles.mRobotoFontFamily,
+                                        fontWeight = FontWeight.Normal,
+                                        color = Color.Gray,
+                                        lineHeight = 18.sp,
+                                        maxLines = 3,
+                                        overflow = TextOverflow.Ellipsis,
+                                        softWrap = true
+                                    )
+                                }
                             }
                         } else {
                             Row(modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable {}
+                                .clickable { modalWindow = achievement }
                                 .padding(vertical = 8.dp, horizontal = 12.dp),
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically) {
@@ -505,17 +566,30 @@ fun AchievementsList(
                                     contentDescription = "",
                                     modifier = Modifier.size(60.dp),
                                 )
-                                Spacer(Modifier.width(20.dp))
-                                Text(
-                                    text = description,
-                                    fontFamily = MyTextStyles.mRobotoFontFamily,
-                                    fontWeight = FontWeight.Normal,
-                                    textAlign = TextAlign.Start,
-                                    maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis,
-                                    softWrap = true,
-                                    modifier = Modifier.weight(1f)
-                                )
+                                Spacer(Modifier.width(28.dp))
+                                Column(modifier = Modifier.fillMaxHeight()) {
+                                    Text(
+                                        text = name,
+                                        fontSize = 18.sp,
+                                        fontFamily = MyTextStyles.mRobotoFontFamily,
+                                        fontWeight = FontWeight.Normal,
+                                        textAlign = TextAlign.Start,
+                                        maxLines = 2,
+                                        overflow = TextOverflow.Ellipsis,
+                                        softWrap = true,
+                                        modifier = Modifier.padding(bottom = 4.dp)
+                                    )
+                                    Text(
+                                        text = description,
+                                        fontFamily = MyTextStyles.mRobotoFontFamily,
+                                        fontWeight = FontWeight.Normal,
+                                        color = Color.Gray,
+                                        lineHeight = 18.sp,
+                                        maxLines = 3,
+                                        overflow = TextOverflow.Ellipsis,
+                                        softWrap = true
+                                    )
+                                }
                             }
                         }
                         if (index < it.size - 1) {
@@ -528,6 +602,14 @@ fun AchievementsList(
                     }
                 }
             }
+        }
+        if (modalWindow != null) {
+            AchievementModalLayer(
+                achievement = modalWindow!!,
+                startAnimation = true,
+                onDismiss = { modalWindow = null },
+                imageSize = 120.dp
+            )
         }
     }
 }

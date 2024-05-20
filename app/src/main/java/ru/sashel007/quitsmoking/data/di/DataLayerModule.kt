@@ -1,4 +1,4 @@
-package ru.sashel007.quitsmoking.data.hilt
+package ru.sashel007.quitsmoking.data.di
 
 import android.content.Context
 import android.util.Log
@@ -25,6 +25,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DataLayerModule {
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext appContext: Context): AppDatabase {

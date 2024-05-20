@@ -34,7 +34,7 @@ import ru.sashel007.quitsmoking.data.repository.dto.AchievementDto
 import ru.sashel007.quitsmoking.mainscreen.elements.Achievements
 import ru.sashel007.quitsmoking.mainscreen.elements.BreathScreen
 import ru.sashel007.quitsmoking.mainscreen.elements.DailyTip
-import ru.sashel007.quitsmoking.mainscreen.elements.ModalLayer
+import ru.sashel007.quitsmoking.mainscreen.elements.AchievementModalLayer
 import ru.sashel007.quitsmoking.mainscreen.elements.MyAppBar
 import ru.sashel007.quitsmoking.mainscreen.elements.ProgressLine
 import ru.sashel007.quitsmoking.mainscreen.elements.Timer
@@ -150,14 +150,12 @@ fun MainScreen(
     }
 
     if (showDetail != null) {
-        ModalLayer(
+        AchievementModalLayer(
             achievement = showDetail!!,
             startAnimation = startAnimation,
             onDismiss = onDismiss,
             imageSize
         )
     }
-
-
 }
 

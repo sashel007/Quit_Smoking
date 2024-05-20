@@ -1,11 +1,18 @@
 package ru.sashel007.quitsmoking.viewmodel
 
+import android.app.Application
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,22 +23,29 @@ import kotlinx.coroutines.launch
 import ru.sashel007.quitsmoking.data.repository.MyRepositoryImpl
 import ru.sashel007.quitsmoking.data.repository.dto.AchievementDto
 import ru.sashel007.quitsmoking.data.repository.dto.mappers.AchievementMapper.toEntity
+import ru.sashel007.quitsmoking.notification.AchievementWorker
 import java.time.Duration
 import java.time.Instant
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class AchievementViewModel @Inject constructor(
+    application: Application,
     private var repository: MyRepositoryImpl
-) : ViewModel() {
+) : AndroidViewModel(application) {
     private val _achievements = MutableLiveData<List<AchievementDto>>()
     val achievements: LiveData<List<AchievementDto>> = _achievements
+
+    private val _newlyUnlockedAchievement = MutableLiveData<AchievementDto>()
+    val newlyUnlockedAchievement: LiveData<AchievementDto> = _newlyUnlockedAchievement
 
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     init {
         startUpdatingAchievements()
+        schedulePeriodicWork()
     }
 
     private fun startUpdatingAchievements() {
@@ -68,6 +82,11 @@ class AchievementViewModel @Inject constructor(
                     val achievementData = updatedAchievement.toEntity()
                     repository.updateAchievement(achievementData)
                     updatedAchievements.add(updatedAchievement)
+
+                    if (isNewlyUnlocked) {
+                        Log.d("Notification_check", "New achievement unlocked: ${updatedAchievement.name}")
+                        _newlyUnlockedAchievement.postValue(updatedAchievement)
+                    }
                 } else {
                     updatedAchievements.add(achievement)
                 }
@@ -76,6 +95,16 @@ class AchievementViewModel @Inject constructor(
         } catch (e: Exception) {
             Log.e("AchievementViewModel", "Error updating achievements", e)
         }
+    }
+
+    private fun schedulePeriodicWork() {
+        val workRequest = PeriodicWorkRequestBuilder<AchievementWorker>(15, TimeUnit.MINUTES)
+            .build()
+        WorkManager.getInstance(getApplication()).enqueueUniquePeriodicWork(
+            "AchievementWorker",
+            ExistingPeriodicWorkPolicy.KEEP,
+            workRequest
+        )
     }
 
     override fun onCleared() {

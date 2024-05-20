@@ -44,10 +44,6 @@ class MyRepositoryImpl @Inject constructor(
         }
     }
 
-    suspend fun insertAchievements(achievements: List<AchievementData>) {
-        achievementDao.insertAll(achievements)
-    }
-
     suspend fun updateAchievement(achievement: AchievementData) {
         achievementDao.updateAchievement(achievement)
     }

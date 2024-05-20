@@ -70,16 +70,16 @@ class SmokingStatsViewModel @Inject constructor(
         val cigarettesPerDay = userDto.cigarettesPerDay
 
         // Расчет доли дня
-        val dayFraction =
-            (hours.toDouble() / 24) + (minutes.toDouble() / 1440) // 1440 - это количество минут в сутках
-        val nonSmokedCigarettes =
-            (days * cigarettesPerDay + (dayFraction * cigarettesPerDay)).toInt()
+        val dayFraction = (hours.toDouble() / 24) + (minutes.toDouble() / 1440) // 1440 - это количество минут в сутках
+        val nonSmokedCigarettes = (days * cigarettesPerDay + (dayFraction * cigarettesPerDay)).toInt()
 
         val packCost = userDto.packCost
         val cigarettesInPackage = userDto.cigarettesInPack
-        val oneCigarettePrice =
-            packCost / maxOf(1, cigarettesInPackage)
-        val moneySaved = oneCigarettePrice * nonSmokedCigarettes
+
+        // Calculate the cost of one cigarette
+        val oneCigarettePrice = packCost.toDouble() / maxOf(1, cigarettesInPackage)
+        // Calculate the total money saved based on the number of unsmoked cigarettes
+        val moneySaved = (oneCigarettePrice * nonSmokedCigarettes).toInt()
 
         val timeToSmokePerCigarette = 7
         val timeSavedInMinutes = timeToSmokePerCigarette * nonSmokedCigarettes
@@ -88,24 +88,20 @@ class SmokingStatsViewModel @Inject constructor(
             onShowDialog()
         }
 
-        val exactMoneySaved =
-            calculateExactMoneySaved(oneCigarettePrice, dayFraction, cigarettesPerDay)
+        val exactMoneySaved = calculateExactMoneySaved(oneCigarettePrice, dayFraction, cigarettesPerDay)
+        Log.d("SmokingStats_Log", "exactMoneySaved = $exactMoneySaved")
 
         updateTimer(time)
         updateNonSmokedCigarettesStat(nonSmokedCigarettes)
-        updateSavedMoneyStat(exactMoneySaved)
+        updateSavedMoneyStat(moneySaved)
         updateDaysSavedStat(timeSavedInMinutes)
 
         val formattedTimeSaved = formatTimeSaved(timeSavedInMinutes)
 
         Log.d(
             "SmokingStats_Log",
-            "time = $time" +
-                    "nonSmokedCigarettes = $nonSmokedCigarettes" +
-                    "moneySaved = $moneySaved" +
-                    "timeSaved = $timeSavedInMinutes"
+            "time = $time, nonSmokedCigarettes = $nonSmokedCigarettes, moneySaved = $moneySaved, timeSaved = $timeSavedInMinutes"
         )
-
     }
 
     private fun setLocalDateTime(userDto: UserDto): LocalDateTime {
@@ -167,13 +163,16 @@ class SmokingStatsViewModel @Inject constructor(
     }
 
     private fun calculateExactMoneySaved(
-        oneCigarettePrice: Int,
+        oneCigarettePrice: Double,
         dayFraction: Double,
         cigarettesPerDay: Int
-    ): Int {
+    ): Double {
         val cigarettesNotSmokedToday = dayFraction * cigarettesPerDay
-        return (oneCigarettePrice * cigarettesNotSmokedToday).toInt()
+        val exactMoneySaved = oneCigarettePrice * cigarettesNotSmokedToday
+        Log.d("SmokingStats_Log", "oneCigarettePrice: $oneCigarettePrice, dayFraction: $dayFraction, cigarettesPerDay: $cigarettesPerDay, cigarettesNotSmokedToday: $cigarettesNotSmokedToday, exactMoneySaved: $exactMoneySaved")
+        return exactMoneySaved
     }
+
 
     private fun formatTimeSaved(totalMinutes: Int): String {
         val days = totalMinutes / 1440

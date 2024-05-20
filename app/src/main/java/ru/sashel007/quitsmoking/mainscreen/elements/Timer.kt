@@ -44,13 +44,28 @@ import ru.sashel007.quitsmoking.viewmodel.SmokingStatsViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Timer(smokingStats: androidx.compose.runtime.State<SmokingStats?>) {
-    val days by remember(smokingStats.value?.days) {
+    val totalDays by remember(smokingStats.value?.days) {
         derivedStateOf {
-            smokingStats.value?.days.toString()
+            smokingStats.value?.days ?: 0L
+        }
+    }
+    val hours by remember(smokingStats.value?.hours) {
+        derivedStateOf {
+            smokingStats.value?.hours ?: 0L
+        }
+    }
+    val minutes by remember(smokingStats.value?.minutes) {
+        derivedStateOf {
+            smokingStats.value?.minutes ?: 0L
         }
     }
 
-    if (smokingStats.value == null || smokingStats.value == SmokingStats(0,0,0,0,0,0)) {
+    val years = totalDays / 365
+    val remainingDays = totalDays % 365
+    val months = remainingDays / 30
+    val days = remainingDays % 30
+
+    if (smokingStats.value == null || smokingStats.value == SmokingStats(0, 0, 0, 0, 0, 0)) {
         TimerSkeleton()
         Log.d("Timer.kt", "${smokingStats.value}")
     } else {
@@ -62,7 +77,6 @@ fun Timer(smokingStats: androidx.compose.runtime.State<SmokingStats?>) {
                 .shadow(5.dp, RoundedCornerShape(6.dp))
                 .clip(RoundedCornerShape(10.dp)),  // Then clip
             horizontalArrangement = Arrangement.SpaceBetween
-
         ) {
             Box(
                 modifier = Modifier
@@ -78,13 +92,13 @@ fun Timer(smokingStats: androidx.compose.runtime.State<SmokingStats?>) {
                     modifier = Modifier.fillMaxHeight()
                 ) {
                     Text(
-                        text = days,
+                        text = if (years > 0) years.toString() else days.toString(),
                         fontWeight = FontWeight.Bold,
                         fontSize = 27.sp,
                         color = Color(0xFF590D82)
                     )
                     Text(
-                        text = stringResource(R.string.days_),
+                        text = if (years > 0) getCorrectWordForm(years.toInt(), "год", "года", "лет") else getCorrectWordForm(days.toInt(), "день", "дня", "дней"),
                         fontSize = 18.sp,
                         color = Color(0xFF590D82)
                     )
@@ -99,20 +113,19 @@ fun Timer(smokingStats: androidx.compose.runtime.State<SmokingStats?>) {
                     .padding(8.dp),
                 contentAlignment = Alignment.Center
             ) {
-// aAnYPOr0XzNY4zr0GpD4
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,  // Center items vertically
                     modifier = Modifier.fillMaxHeight()
                 ) {
                     Text(
-                        text = smokingStats.value?.hours.toString(),
+                        text = if (years > 0) months.toString() else hours.toString(),
                         fontWeight = FontWeight.Bold,
                         fontSize = 27.sp,
                         color = Color(0xFF590D82)
                     )
                     Text(
-                        text = stringResource(R.string.hours_),
+                        text = if (years > 0) getCorrectWordForm(months.toInt(), "месяц", "месяца", "месяцев") else getCorrectWordForm(hours.toInt(), "час", "часа", "часов"),
                         fontSize = 18.sp,
                         color = Color(0xFF590D82)
                     )
@@ -133,13 +146,13 @@ fun Timer(smokingStats: androidx.compose.runtime.State<SmokingStats?>) {
                     modifier = Modifier.fillMaxHeight()
                 ) {
                     Text(
-                        text = smokingStats.value?.minutes.toString(),
+                        text = if (years > 0) hours.toString() else minutes.toString(),
                         fontWeight = FontWeight.Bold,
                         fontSize = 27.sp,
                         color = Color(0xFF590D82)
                     )
                     Text(
-                        text = stringResource(R.string.minutes_),
+                        text = if (years > 0) getCorrectWordForm(hours.toInt(), "час", "часа", "часов") else getCorrectWordForm(minutes.toInt(), "минута", "минуты", "минут"),
                         fontSize = 18.sp,
                         color = Color(0xFF590D82)
                     )
@@ -148,6 +161,19 @@ fun Timer(smokingStats: androidx.compose.runtime.State<SmokingStats?>) {
         }
     }
 }
+
+fun getCorrectWordForm(value: Int, form1: String, form2: String, form5: String): String {
+    val absValue = value % 100
+    if (absValue in 11..19) {
+        return form5
+    }
+    return when (absValue % 10) {
+        1 -> form1
+        2, 3, 4 -> form2
+        else -> form5
+    }
+}
+
 
 @Composable
 fun ShimmerEffect() {

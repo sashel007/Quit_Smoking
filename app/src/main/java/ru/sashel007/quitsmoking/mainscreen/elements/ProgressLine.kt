@@ -197,7 +197,7 @@ fun DaysPassed(modifier: Modifier, daysAfterCancelling: Long?) {
             contentScale = ContentScale.FillBounds
         )
         Text(
-            text = formatNumber(daysAfterCancelling), fontSize = 18.sp, fontWeight = Bold
+            text = formatDayPassedNumber(daysAfterCancelling), fontSize = 18.sp, fontWeight = Bold
         )
         Text(
             text = stringResource(R.string.days_after_cancelling),
@@ -227,7 +227,7 @@ fun NoCigarettesSmoked(modifier: Modifier, nonSmokedCigs: Int?) {
             contentScale = ContentScale.FillBounds
         )
         Text(
-            text = nonSmokedCigs.toString(), fontSize = 18.sp, fontWeight = Bold
+            text = formatNonSmokedNumber(nonSmokedCigs), fontSize = 18.sp, fontWeight = Bold
         )
         Text(
             text = stringResource(R.string.smoked_cigarettes),
@@ -257,7 +257,16 @@ fun MoneySaved(modifier: Modifier, moneySaved: Int?) {
             contentScale = ContentScale.FillBounds
         )
         Text(
-            text = "$moneySaved", fontSize = 18.sp, fontWeight = Bold
+            text = formatNonSmokedNumber(moneySaved),
+            fontSize = if (ru.sashel007.quitsmoking.mainscreen.elements.formatNonSmokedNumber(
+                    moneySaved
+                ).contains("тыс.")
+            ) {
+                14.sp
+            } else {
+                18.sp
+            },
+            fontWeight = Bold
         )
         Text(
             text = stringResource(R.string.money_saved),
@@ -322,10 +331,19 @@ fun formatTimeSaved(totalMinutes: Int): String {
     }
 }
 
-fun formatNumber(number: Long?): String {
+fun formatDayPassedNumber(number: Long?): String {
     return when {
         number == null -> "0"
         number > 9999 -> "${number / 10000} тыс."
+        else -> number.toString()
+    }
+}
+
+fun formatNonSmokedNumber(number: Int?): String {
+    return when {
+        number == null -> "0"
+        number >= 1_000_000 -> "${(number / 1_000_000)}.${(number % 1_000_000 / 100_000)} млн."
+        number >= 100_000 -> "${(number / 1_000)} тыс."
         else -> number.toString()
     }
 }

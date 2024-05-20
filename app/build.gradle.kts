@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "ru.sashel007.quitsmoking"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -55,9 +55,9 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.activity:activity-compose:1.8.2")
+    implementation("androidx.activity:activity-compose:1.9.0")
     
     //compose
     implementation(platform("androidx.compose:compose-bom:2024.04.00"))
@@ -70,7 +70,6 @@ dependencies {
     implementation ("com.jakewharton.threetenabp:threetenabp:1.3.1")
     implementation ("com.google.accompanist:accompanist-pager:0.27.1")
 
-
     // Room
     implementation("androidx.room:room-runtime:2.6.0")
     implementation("androidx.room:room-ktx:2.6.0")
@@ -79,14 +78,16 @@ dependencies {
     // ViewModel & LiveData
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
-    implementation("androidx.compose.runtime:runtime-livedata:1.6.5")
-    kapt ("com.google.dagger:hilt-android-compiler:2.44")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.7")
 
     testImplementation("junit:junit:4.13.2")
 
     // Dagger-Hilt
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
+    implementation("androidx.hilt:hilt-common:1.2.0")
+    implementation("androidx.hilt:hilt-work:1.2.0")
 
     // GSON
     implementation("com.google.code.gson:gson:2.10.1")
@@ -98,12 +99,11 @@ dependencies {
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // notifications
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 }
 
 kapt {
     correctErrorTypes = true
 }
-//val compileKotlin: KotlinCompile by tasks
-//compileKotlin.kotlinOptions {
-//    languageVersion = "1.9"
-//}

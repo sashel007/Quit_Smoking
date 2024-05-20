@@ -16,6 +16,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -28,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -56,6 +58,7 @@ import ru.sashel007.quitsmoking.navigator.CigarettesPerDayPage
 import ru.sashel007.quitsmoking.navigator.FirstMonthWithoutSmokingPage
 import ru.sashel007.quitsmoking.navigator.NotificationsPage
 import ru.sashel007.quitsmoking.navigator.PackCostPage
+import ru.sashel007.quitsmoking.navigator.PageIndicator
 import ru.sashel007.quitsmoking.navigator.QuitDateSelectionPage
 import ru.sashel007.quitsmoking.navigator.StartingPage
 import ru.sashel007.quitsmoking.ui.theme.MyTextStyles
@@ -113,41 +116,60 @@ fun AppNavigator(
         )
     }
 
+    val firstTimePages = listOf(
+        NavRoutes.STARTING_PAGE,
+        NavRoutes.QUIT_DATE_SELECTION_PAGE,
+        NavRoutes.CIGARETTES_PER_DAY_PAGE,
+        NavRoutes.CIGARETTES_IN_PACK_PAGE,
+        NavRoutes.PACK_COST_PAGE,
+        NavRoutes.FIRST_MONTH_WITHOUT_SMOKING_PAGE,
+        NavRoutes.NOTIFICATIONS_PAGE
+    )
+    var currentPageIndex by remember { mutableIntStateOf(0) }
+
     LaunchedEffect(appState) {
         when (appState) {
             AppState.STARTING_PAGE -> {
                 navController.navigate(NavRoutes.STARTING_PAGE) {
                     popUpTo(NavRoutes.STARTING_PAGE) { inclusive = true }
                 }
+                currentPageIndex = 0
             }
 
             AppState.QUIT_DATE_SELECTION_PAGE -> {
                 navController.navigate(NavRoutes.QUIT_DATE_SELECTION_PAGE)
+                currentPageIndex = 1
             }
 
             AppState.CIGARETTES_PER_DAY_PAGE -> {
                 navController.navigate(NavRoutes.CIGARETTES_PER_DAY_PAGE)
+                currentPageIndex = 2
             }
 
             AppState.CIGARETTES_IN_PACK_PAGE -> {
                 navController.navigate(NavRoutes.CIGARETTES_IN_PACK_PAGE)
+                currentPageIndex = 3
             }
 
             AppState.PACK_COST_PAGE -> {
                 navController.navigate(NavRoutes.PACK_COST_PAGE)
+                currentPageIndex = 4
             }
 
             AppState.FIRST_MONTH_WITHOUT_SMOKING -> {
                 navController.navigate(NavRoutes.FIRST_MONTH_WITHOUT_SMOKING_PAGE)
+                currentPageIndex = 5
             }
 
             AppState.NOTIFICATION_PAGE -> {
                 navController.navigate(NavRoutes.NOTIFICATIONS_PAGE)
+                currentPageIndex = 6
             }
 
             AppState.SUBSEQUENT_LAUNCH -> {
                 navController.navigate(NavRoutes.MAIN_SCREEN) {
                     popUpTo(NavRoutes.MAIN_SCREEN) { inclusive = true }
+                    currentPageIndex = -1
                 }
             }
         }
@@ -157,6 +179,7 @@ fun AppNavigator(
         showNavigationBar.value = currentRoute in listOf(
             NavRoutes.MAIN_SCREEN, NavRoutes.MOTIVATION, NavRoutes.TIPS, NavRoutes.SETTINGS
         )
+        currentPageIndex = firstTimePages.indexOf(currentRoute).takeIf { it >= 0 } ?: -1
     }
 
 //    PageIndicator(currentPage = 2, numberOfPages = 6)
@@ -217,7 +240,9 @@ fun AppNavigator(
             composable(NavRoutes.NOTIFICATIONS_PAGE) {
                 NotificationsPage {
                     sharedPref.setLastOpenedPage(NavRoutes.NOTIFICATIONS_PAGE)
-                    navController.navigate(NavRoutes.MAIN_SCREEN)
+                    navController.navigate(NavRoutes.MAIN_SCREEN) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
             }
             composable(NavRoutes.MAIN_SCREEN) {
@@ -250,6 +275,17 @@ fun AppNavigator(
             composable(NavRoutes.MAIL_TO_DEV_INFO_PAGE) { MailToDevInfoPage(navController) }
             composable(NavRoutes.SETTINGS_POLICY_PAGE) { PolicyPage(navController)}
         }
+
+        if (currentPageIndex in firstTimePages.indices) {
+            PageIndicator(
+                currentPage = currentPageIndex,
+                numberOfPages = firstTimePages.size,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 16.dp)
+            )
+        }
+
         if (showNavigationBar.value) {
             NavigationBar(
                 modifier = Modifier

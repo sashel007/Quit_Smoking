@@ -38,4 +38,6 @@
     <string name="settings_meme_img">Мемная картинка \"Настройки\"</string>
     <string name="try_breathable_practices">Попробуйте уникальные дыхательные практики по методике квадрата, нажмите \"Попробовать\" и следуйте инструкции</string>
     <string name="square_breath">Дыхание по квадрату</string>
+    <string name="notification_channel_name">Уведомления о достижениях</string>
+    <string name="notification_channel_description">Уведомления о достижениях при воздержании от сигарет</string>
 </resources>

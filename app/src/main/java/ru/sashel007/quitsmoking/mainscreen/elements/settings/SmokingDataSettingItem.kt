@@ -143,6 +143,10 @@ fun UserSmokingDataChoosing(
 
     val coroutineScope = rememberCoroutineScope()
 
+    val validateInput: (String) -> Boolean = { value ->
+        value.isNotEmpty() && value.length <= 3 && value.toIntOrNull() != null && value.toInt() != 0
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -251,11 +255,12 @@ fun UserSmokingDataChoosing(
                             TextField(
                                 value = cigarettesPerDay,
                                 onValueChange = { value ->
-                                    cigarettesPerDay = value
-                                    isChanged =
-                                        cigarettesPerDay != initialCigarettesPerDay || cigarettesInPack != initialCigarettesInPack || packCost != initialPackCost
-                                    showError =
-                                        cigarettesPerDay == "" || cigarettesPerDay.toIntOrNull() == 0
+                                    if (value.length <= 3 && (value.isEmpty() || !value.startsWith("0"))) {
+                                        cigarettesPerDay = value
+                                        isChanged =
+                                            cigarettesPerDay != initialCigarettesPerDay || cigarettesInPack != initialCigarettesInPack || packCost != initialPackCost
+                                        showError = !validateInput(cigarettesPerDay) || !validateInput(cigarettesInPack) || !validateInput(packCost)
+                                    }
                                 },
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -298,11 +303,12 @@ fun UserSmokingDataChoosing(
                             TextField(
                                 value = cigarettesInPack,
                                 onValueChange = { value ->
-                                    cigarettesInPack = value
-                                    isChanged =
-                                        cigarettesPerDay != initialCigarettesPerDay || cigarettesInPack != initialCigarettesInPack || packCost != initialPackCost
-                                    showError =
-                                        cigarettesPerDay == "" || cigarettesPerDay.toIntOrNull() == 0
+                                    if (value.length <= 3 && (value.isEmpty() || !value.startsWith("0"))) {
+                                        cigarettesInPack = value
+                                        isChanged =
+                                            cigarettesPerDay != initialCigarettesPerDay || cigarettesInPack != initialCigarettesInPack || packCost != initialPackCost
+                                        showError = !validateInput(cigarettesPerDay) || !validateInput(cigarettesInPack) || !validateInput(packCost)
+                                    }
                                 },
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -345,11 +351,12 @@ fun UserSmokingDataChoosing(
                             TextField(
                                 value = packCost,
                                 onValueChange = { value ->
-                                    packCost = value
-                                    isChanged =
-                                        cigarettesPerDay != initialCigarettesPerDay || cigarettesInPack != initialCigarettesInPack || packCost != initialPackCost
-                                    showError =
-                                        cigarettesPerDay == "" || cigarettesPerDay.toIntOrNull() == 0
+                                    if (value.length <= 3 && (value.isEmpty() || !value.startsWith("0"))) {
+                                        packCost = value
+                                        isChanged =
+                                            cigarettesPerDay != initialCigarettesPerDay || cigarettesInPack != initialCigarettesInPack || packCost != initialPackCost
+                                        showError = !validateInput(cigarettesPerDay) || !validateInput(cigarettesInPack) || !validateInput(packCost)
+                                    }
                                 },
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
