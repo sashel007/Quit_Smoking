@@ -4,7 +4,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,10 +44,10 @@ fun ProgressLine(smokingStats: State<SmokingStats?>) {
     val modifierAnimated = Modifier
         .padding(bottom = 20.dp)
         .animateContentSize(animationSpec = tween(durationMillis = 800))
-    var daysAfterCancelling = smokingStats.value?.days
-    var nonSmokedCigarettes = smokingStats.value?.nonSmokedCigarettes
-    var moneySaved = smokingStats.value?.savedMoney
-    var timeSaved = smokingStats.value?.savedTimeInMinutes
+    val daysAfterCancelling = smokingStats.value?.days
+    val nonSmokedCigarettes = smokingStats.value?.nonSmokedCigarettes
+    val moneySaved = smokingStats.value?.savedMoney
+    val timeSaved = smokingStats.value?.savedTimeInMinutes
 
     Column(modifier = Modifier
         .fillMaxWidth()
@@ -258,7 +257,7 @@ fun MoneySaved(modifier: Modifier, moneySaved: Int?) {
         )
         Text(
             text = formatNonSmokedNumber(moneySaved),
-            fontSize = if (ru.sashel007.quitsmoking.mainscreen.elements.formatNonSmokedNumber(
+            fontSize = if (formatNonSmokedNumber(
                     moneySaved
                 ).contains("тыс.")
             ) {

@@ -1,13 +1,11 @@
 package ru.sashel007.quitsmoking.data.db.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import kotlinx.coroutines.flow.Flow
 import ru.sashel007.quitsmoking.data.db.entity.UserData
 
 @Dao
@@ -24,7 +22,4 @@ interface UserDao {
 
     @Delete
     suspend fun delete(userData: UserData)
-
-    @Query("SELECT * FROM user_data")
-    suspend fun getAllUserData(): List<UserData>
 }

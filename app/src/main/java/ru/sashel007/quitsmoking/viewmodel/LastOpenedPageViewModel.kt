@@ -6,7 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import ru.sashel007.quitsmoking.mainscreen.elements.NavRoutes
+import ru.sashel007.quitsmoking.navigator.NavRoutes
 import ru.sashel007.quitsmoking.util.AppState
 import ru.sashel007.quitsmoking.util.MySharedPref
 import javax.inject.Inject
@@ -15,7 +15,7 @@ import javax.inject.Inject
 class LastOpenedPageViewModel @Inject constructor(private val sharedPref: MySharedPref) :
     ViewModel() {
 
-    private val _launchState = MutableStateFlow<AppState>(AppState.STARTING_PAGE)
+    private val _launchState = MutableStateFlow(AppState.STARTING_PAGE)
     val launchState: StateFlow<AppState> = _launchState
 
     init {

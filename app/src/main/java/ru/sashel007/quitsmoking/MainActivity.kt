@@ -6,14 +6,11 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
@@ -23,7 +20,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.hilt.android.AndroidEntryPoint
-import ru.sashel007.quitsmoking.mainscreen.elements.AppNavigator
+import ru.sashel007.quitsmoking.navigator.AppNavigator
 import ru.sashel007.quitsmoking.ui.theme.QuitSmokingTheme
 import ru.sashel007.quitsmoking.util.MySharedPref
 import ru.sashel007.quitsmoking.viewmodel.AchievementViewModel
@@ -37,18 +34,17 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var sharedPref: MySharedPref
 
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        if (isGranted) {
-            Log.d("Notification_check", "MainActivity_Notification permission granted")
-            createNotificationChannel()
-        } else {
-            Log.d("Notification_check", "MainActivity_Notification permission denied")
-        }
-    }
+//    private val requestPermissionLauncher = registerForActivityResult(
+//        ActivityResultContracts.RequestPermission()
+//    ) { isGranted: Boolean ->
+//        if (isGranted) {
+//            Log.d("Notification_check", "MainActivity_Notification permission granted")
+//            createNotificationChannel()
+//        } else {
+//            Log.d("Notification_check", "MainActivity_Notification permission denied")
+//        }
+//    }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidThreeTen.init(this)
@@ -57,24 +53,24 @@ class MainActivity : ComponentActivity() {
         val smokingStatsViewModel: SmokingStatsViewModel by viewModels<SmokingStatsViewModel>()
         val achievementViewModel: AchievementViewModel by viewModels<AchievementViewModel>()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            when {
-                ContextCompat.checkSelfPermission(
-                    this,
-                    android.Manifest.permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED -> {
-                    Log.d("Notification_check", "MainActivity_Notification permission already granted")
-                    createNotificationChannel()  // Создание канала уведомлений
-                }
-                shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS) -> {
-                    Log.d("Notification_check", "MainActivity_Show rationale for notification permission")
-                }
-                else -> {
-                    Log.d("Notification_check", "MainActivity_Requesting notification permission")
-                    requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-                }
-            }
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            when {
+//                ContextCompat.checkSelfPermission(
+//                    this,
+//                    android.Manifest.permission.POST_NOTIFICATIONS
+//                ) == PackageManager.PERMISSION_GRANTED -> {
+//                    Log.d("Notification_check", "MainActivity_Notification permission already granted")
+//                    createNotificationChannel()  // Создание канала уведомлений
+//                }
+//                shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS) -> {
+//                    Log.d("Notification_check", "MainActivity_Show rationale for notification permission")
+//                }
+//                else -> {
+//                    Log.d("Notification_check", "MainActivity_Requesting notification permission")
+//                    requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+//                }
+//            }
+//        }
 
         setContent {
             QuitSmokingTheme {
@@ -88,7 +84,9 @@ class MainActivity : ComponentActivity() {
                         smokingStatsViewModel,
                         achievementViewModel,
                         sharedPref
-                    )
+                    ) {
+                        createNotificationChannel()
+                    }
                 }
             }
         }
@@ -99,7 +97,6 @@ class MainActivity : ComponentActivity() {
                 Log.d("Notification_check", "New achievement unlocked: ${it.name}")
                 sendNotification(
                     this,
-                    "MainActivity!",
                     "Новое достижение: ${it.name} без сигарет"
                 )
             }
@@ -108,21 +105,20 @@ class MainActivity : ComponentActivity() {
 
     private fun createNotificationChannel() {
         Log.d("Notification_check", "Creating notification channel")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = getString(R.string.notification_channel_name)
-            val descriptionText = getString(R.string.notification_channel_description)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance).apply {
-                description = descriptionText
-            }
-            val notificationManager: NotificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-            Log.d("Notification_check", "Notification channel created")
+        val name = getString(R.string.notification_channel_name)
+        val descriptionText = getString(R.string.notification_channel_description)
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance).apply {
+            description = descriptionText
         }
+        val notificationManager: NotificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+        Log.d("Notification_check", "Notification channel created")
     }
 
-    private fun sendNotification(context: Context, title: String, message: String) {
+    private fun sendNotification(context: Context, message: String) {
+        val notificationTitle = "Так держать!"
         Log.d("Notification_check", "sendNotification called")
         if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
             Log.d("Notification_check", "Permission granted")
@@ -133,8 +129,8 @@ class MainActivity : ComponentActivity() {
                 PendingIntent.FLAG_IMMUTABLE)
 
             val builder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.drawable.advice_icon)
-                .setContentTitle(title)
+                .setSmallIcon(R.drawable.quit_smoking_logo)
+                .setContentTitle(notificationTitle)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
@@ -148,7 +144,6 @@ class MainActivity : ComponentActivity() {
             Log.d("Notification_check", "Permission for notifications not granted")
         }
     }
-
 
     companion object {
         private const val NOTIFICATION_CHANNEL_ID = "achievements_channel"

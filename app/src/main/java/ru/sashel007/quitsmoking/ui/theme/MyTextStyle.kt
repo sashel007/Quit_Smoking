@@ -1,6 +1,5 @@
 package ru.sashel007.quitsmoking.ui.theme
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -9,13 +8,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import ru.sashel007.quitsmoking.R
 import ru.sashel007.quitsmoking.ui.theme.AppColors.violette
-
-@Composable
-fun MyTextStyle() {
-    TextStyle(
-        color = violette, lineHeight = 16.sp
-    )
-}
 
 object MyTextStyles {
     val mRobotoFontFamily = FontFamily(

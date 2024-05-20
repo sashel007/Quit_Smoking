@@ -368,8 +368,8 @@ fun TipsList(navController: NavController) {
     val shape =
         if (isScrolled.value) RoundedCornerShape(0.dp, 0.dp, 12.dp, 12.dp) else RectangleShape
     val shadowElevation = if (isScrolled.value) 8.dp else 0.dp
-    var onShowTipDialog = remember { mutableStateOf(false) }
-    var onTipTransit = remember { mutableStateOf<DialogSpecificType?>(null) }
+    val onShowTipDialog = remember { mutableStateOf(false) }
+    val onTipTransit = remember { mutableStateOf<DialogSpecificType?>(null) }
 
     Box {
         Column {
@@ -544,8 +544,8 @@ fun FactList(navController: NavController) {
     val shape =
         if (isScrolled.value) RoundedCornerShape(0.dp, 0.dp, 12.dp, 12.dp) else RectangleShape
     val shadowElevation = if (isScrolled.value) 8.dp else 0.dp
-    var onShowTipDialog = remember { mutableStateOf(false) }
-    var onFactTransit = remember { mutableStateOf<DialogSpecificType?>(null) }
+    val onShowTipDialog = remember { mutableStateOf(false) }
+    val onFactTransit = remember { mutableStateOf<DialogSpecificType?>(null) }
 
     Box {
         Column {
@@ -647,8 +647,8 @@ fun MythList(navController: NavController) {
     val shape =
         if (isScrolled.value) RoundedCornerShape(0.dp, 0.dp, 12.dp, 12.dp) else RectangleShape
     val shadowElevation = if (isScrolled.value) 8.dp else 0.dp
-    var onShowTipDialog = remember { mutableStateOf(false) }
-    var onFactTransit = remember { mutableStateOf<DialogSpecificType?>(null) }
+    val onShowTipDialog = remember { mutableStateOf(false) }
+    val onFactTransit = remember { mutableStateOf<DialogSpecificType?>(null) }
 
     Box {
         Column {

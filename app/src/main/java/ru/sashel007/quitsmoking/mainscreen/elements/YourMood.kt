@@ -159,7 +159,7 @@ fun MoodDialog(onDismiss: () -> Unit, onSelectImage: (Int) -> Unit) {
 
 @Composable
 fun MoodSelector(imageId: Int, onDismiss: () -> Unit) {
-    var isImageExpanded by remember { mutableStateOf(true) }
+    val isImageExpanded by remember { mutableStateOf(true) }
     var showText by remember { mutableStateOf(false) }
     val scale: Float by animateFloatAsState(
         targetValue = if (isImageExpanded) 5f else 1f,

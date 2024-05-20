@@ -1,7 +1,5 @@
 package ru.sashel007.quitsmoking.mainscreen
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,10 +29,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import ru.sashel007.quitsmoking.data.repository.dto.AchievementDto
+import ru.sashel007.quitsmoking.mainscreen.elements.AchievementModalLayer
 import ru.sashel007.quitsmoking.mainscreen.elements.Achievements
 import ru.sashel007.quitsmoking.mainscreen.elements.BreathScreen
 import ru.sashel007.quitsmoking.mainscreen.elements.DailyTip
-import ru.sashel007.quitsmoking.mainscreen.elements.AchievementModalLayer
 import ru.sashel007.quitsmoking.mainscreen.elements.MyAppBar
 import ru.sashel007.quitsmoking.mainscreen.elements.ProgressLine
 import ru.sashel007.quitsmoking.mainscreen.elements.Timer
@@ -42,7 +40,6 @@ import ru.sashel007.quitsmoking.mainscreen.elements.YourMood
 import ru.sashel007.quitsmoking.viewmodel.AchievementViewModel
 import ru.sashel007.quitsmoking.viewmodel.SmokingStatsViewModel
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScreen(
     smokingStatsViewModel: SmokingStatsViewModel,
@@ -53,7 +50,7 @@ fun MainScreen(
     val scrollState = rememberLazyListState()
     val achievements = achievementViewModel.achievements.observeAsState()
 
-    var startAnimation by remember { mutableStateOf(false) }
+    val startAnimation by remember { mutableStateOf(false) }
     val imageSize = 120.dp
     var showDetail by remember { mutableStateOf<AchievementDto?>(null) }
     val onDismiss = { showDetail = null }

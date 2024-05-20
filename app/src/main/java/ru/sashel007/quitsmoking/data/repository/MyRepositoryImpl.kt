@@ -11,7 +11,6 @@ import ru.sashel007.quitsmoking.data.repository.dto.mappers.AchievementMapper.to
 import ru.sashel007.quitsmoking.data.repository.dto.mappers.UserMapper.toDto
 import ru.sashel007.quitsmoking.data.repository.dto.mappers.UserMapper.toEntity
 import java.util.logging.Level
-import java.util.logging.LogManager
 import java.util.logging.Logger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -32,7 +31,7 @@ class MyRepositoryImpl @Inject constructor(
         userDao.delete(userData)
     }
 
-    suspend fun getUserData(id: Int): UserDto {
+    suspend fun getUserData(): UserDto {
         return try {
             val userDao = userDao.getUserById(1)
             Log.d("FirstMonthWithoutSmokingPage", "repository: ${userDao.toDto()}")
@@ -46,15 +45,6 @@ class MyRepositoryImpl @Inject constructor(
 
     suspend fun updateAchievement(achievement: AchievementData) {
         achievementDao.updateAchievement(achievement)
-    }
-
-    suspend fun getAchievement(id: Int): AchievementDto {
-        return try {
-            val achievementDaoEntity = achievementDao.getAchievement(id)
-            achievementDaoEntity.toDto()
-        } catch (e: Exception) {
-            AchievementDto(0, "_", "_", "_", false, 0, 0)
-        }
     }
 
     suspend fun getAllAchievements(): List<AchievementDto> {

@@ -1,8 +1,6 @@
 package ru.sashel007.quitsmoking.mainscreen.elements
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -24,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,15 +30,13 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.sashel007.quitsmoking.R
 import ru.sashel007.quitsmoking.data.repository.dto.SmokingStats
-import ru.sashel007.quitsmoking.viewmodel.SmokingStatsViewModel
+import ru.sashel007.quitsmoking.ui.theme.MyTextStyles
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Timer(smokingStats: androidx.compose.runtime.State<SmokingStats?>) {
     val totalDays by remember(smokingStats.value?.days) {
@@ -98,7 +93,12 @@ fun Timer(smokingStats: androidx.compose.runtime.State<SmokingStats?>) {
                         color = Color(0xFF590D82)
                     )
                     Text(
-                        text = if (years > 0) getCorrectWordForm(years.toInt(), "год", "года", "лет") else getCorrectWordForm(days.toInt(), "день", "дня", "дней"),
+                        text = if (years > 0) getCorrectWordForm(
+                            years.toInt(),
+                            "год",
+                            "года",
+                            "лет"
+                        ) else getCorrectWordForm(days.toInt(), "день", "дня", "дней"),
                         fontSize = 18.sp,
                         color = Color(0xFF590D82)
                     )
@@ -125,7 +125,12 @@ fun Timer(smokingStats: androidx.compose.runtime.State<SmokingStats?>) {
                         color = Color(0xFF590D82)
                     )
                     Text(
-                        text = if (years > 0) getCorrectWordForm(months.toInt(), "месяц", "месяца", "месяцев") else getCorrectWordForm(hours.toInt(), "час", "часа", "часов"),
+                        text = if (years > 0) getCorrectWordForm(
+                            months.toInt(),
+                            "месяц",
+                            "месяца",
+                            "месяцев"
+                        ) else getCorrectWordForm(hours.toInt(), "час", "часа", "часов"),
                         fontSize = 18.sp,
                         color = Color(0xFF590D82)
                     )
@@ -152,7 +157,12 @@ fun Timer(smokingStats: androidx.compose.runtime.State<SmokingStats?>) {
                         color = Color(0xFF590D82)
                     )
                     Text(
-                        text = if (years > 0) getCorrectWordForm(hours.toInt(), "час", "часа", "часов") else getCorrectWordForm(minutes.toInt(), "минута", "минуты", "минут"),
+                        text = if (years > 0) getCorrectWordForm(
+                            hours.toInt(),
+                            "час",
+                            "часа",
+                            "часов"
+                        ) else getCorrectWordForm(minutes.toInt(), "минута", "минуты", "минут"),
                         fontSize = 18.sp,
                         color = Color(0xFF590D82)
                     )
@@ -183,7 +193,7 @@ fun ShimmerEffect() {
         Color.LightGray.copy(alpha = 0.9f)
     )
 
-    val transition = rememberInfiniteTransition()
+    val transition = rememberInfiniteTransition(label = "")
     val translateAnim = transition.animateFloat(
         initialValue = 0f,
         targetValue = 1000f,
@@ -210,36 +220,49 @@ fun ShimmerEffect() {
 
 @Composable
 fun TimerSkeleton() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 35.dp)
-            .shadow(5.dp, RoundedCornerShape(6.dp))
-            .clip(RoundedCornerShape(10.dp)),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Box(
+    Box {
+        Row(
             modifier = Modifier
-                .weight(1f)
-                .height(90.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 35.dp)
+                .shadow(5.dp, RoundedCornerShape(6.dp))
+                .clip(RoundedCornerShape(10.dp)),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            ShimmerEffect()
-        }
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(90.dp)
+            ) {
+                ShimmerEffect()
+            }
 
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .height(90.dp)
-        ) {
-            ShimmerEffect()
-        }
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(90.dp)
+            ) {
+                ShimmerEffect()
+            }
 
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .height(90.dp)
-        ) {
-            ShimmerEffect()
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(90.dp)
+            ) {
+                ShimmerEffect()
+            }
         }
+        Text(
+            "Настраиваем вашу статистику...",
+            fontFamily = MyTextStyles.mRobotoFontFamily,
+            fontWeight = FontWeight.ExtraBold,
+            color = Color.White,
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Center),
+            textAlign = TextAlign.Center
+        )
     }
+
 }

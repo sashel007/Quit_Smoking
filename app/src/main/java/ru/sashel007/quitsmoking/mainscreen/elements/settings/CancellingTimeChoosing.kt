@@ -115,7 +115,6 @@ fun CancellingSettingItemImageButton(text: String, navController: NavController)
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CancellingTimeChoosing(
     userViewModel: UserViewModel,
@@ -481,7 +480,6 @@ fun ExpandableBox(context: Context) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 suspend fun saveQuitDetails(
     userViewModel: UserViewModel,
     date: LocalDate,

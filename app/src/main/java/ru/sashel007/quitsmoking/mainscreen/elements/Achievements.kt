@@ -52,7 +52,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -226,11 +225,49 @@ fun AchievementBlock(
     onClick: () -> Unit,
     imageSize: Dp
 ) {
-    val context = LocalContext.current
+    val imageMap = remember {
+        mapOf(
+            "achievement_1" to R.drawable.achievement_1,
+            "achievement_2" to R.drawable.achievement_2,
+            "achievement_3" to R.drawable.achievement_3,
+            "achievement_4" to R.drawable.achievement_4,
+            "achievement_5" to R.drawable.achievement_5,
+            "achievement_6" to R.drawable.achievement_6,
+            "achievement_7" to R.drawable.achievement_7,
+            "achievement_8" to R.drawable.achievement_8,
+            "achievement_9" to R.drawable.achievement_9,
+            "achievement_10" to R.drawable.achievement_10,
+            "achievement_11" to R.drawable.achievement_11,
+            "achievement_12" to R.drawable.achievement_12,
+            "achievement_13" to R.drawable.achievement_13,
+            "achievement_14" to R.drawable.achievement_14,
+            "achievement_15" to R.drawable.achievement_15,
+            "achievement_16" to R.drawable.achievement_16,
+            "achievement_17" to R.drawable.achievement_17,
+            "achievement_18" to R.drawable.achievement_18,
+            "achievement_19" to R.drawable.achievement_19,
+            "achievement_20" to R.drawable.achievement_20,
+            "achievement_21" to R.drawable.achievement_21,
+            "achievement_22" to R.drawable.achievement_22,
+            "achievement_23" to R.drawable.achievement_23,
+            "achievement_24" to R.drawable.achievement_24,
+            "achievement_25" to R.drawable.achievement_25,
+            "achievement_26" to R.drawable.achievement_26,
+            "achievement_27" to R.drawable.achievement_27,
+            "achievement_28" to R.drawable.achievement_28,
+            "achievement_29" to R.drawable.achievement_29,
+            "achievement_30" to R.drawable.achievement_30,
+            "achievement_31" to R.drawable.achievement_31,
+            "achievement_32" to R.drawable.achievement_32,
+            "achievement_33" to R.drawable.achievement_33,
+            "achievement_34" to R.drawable.achievement_34,
+            "achievement_35" to R.drawable.achievement_35
+        )
+    }
+
     val imageName = achievement.imageUri
-    val imageResId = context.resources.getIdentifier(
-        imageName, "drawable", context.packageName
-    )
+    val imageResId = imageMap[imageName] ?: R.drawable.achievement_error
+
     val progress = achievement.progressLine
     val isUnlocked = achievement.isUnlocked
     val achievName = achievement.name
@@ -386,6 +423,8 @@ fun AchievementBlock(
     }
 }
 
+
+
 @Composable
 fun AchievementsList(
     navController: NavController,
@@ -428,7 +467,6 @@ fun AchievementsList(
             "achievement_33" to R.drawable.achievement_33,
             "achievement_34" to R.drawable.achievement_34,
             "achievement_35" to R.drawable.achievement_35
-
         )
     }
     val startAnimation by remember { mutableStateOf(true) }
@@ -450,8 +488,6 @@ fun AchievementsList(
     val (backgroundColor, shape, shadowElevation) = scrollEffects.value
 
     var modalWindow by remember { mutableStateOf<AchievementDto?>(null) }
-
-
 
     Box {
         Column {

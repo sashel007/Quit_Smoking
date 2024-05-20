@@ -53,15 +53,14 @@ import ru.sashel007.quitsmoking.R
 import ru.sashel007.quitsmoking.data.repository.dto.mappers.Disclaimer
 import ru.sashel007.quitsmoking.mainscreen.elements.BackButtonImage
 import ru.sashel007.quitsmoking.mainscreen.elements.InfoText
-import ru.sashel007.quitsmoking.mainscreen.elements.NavRoutes
-import ru.sashel007.quitsmoking.ui.theme.MyTextStyle
+import ru.sashel007.quitsmoking.navigator.NavRoutes
 import ru.sashel007.quitsmoking.ui.theme.MyTextStyles
 import ru.sashel007.quitsmoking.util.loadDisclaimer
 
 
 @Composable
 fun PolicySettingItem(title: String, navController: NavController) {
-    Box() {
+    Box {
         PolicySettingItemImageButton(title, navController)
     }
 }

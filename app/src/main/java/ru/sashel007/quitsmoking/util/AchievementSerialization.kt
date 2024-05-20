@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import dagger.hilt.android.qualifiers.ApplicationContext
 import ru.sashel007.quitsmoking.data.db.entity.AchievementData
 import javax.inject.Inject
 import javax.inject.Singleton

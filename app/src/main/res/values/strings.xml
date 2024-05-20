@@ -27,10 +27,10 @@
     <string name="common_progress">Общий прогресс</string>
     <string name="days_after_cancelling">дней после отказа</string>
     <string name="smoked_cigarettes">сигарет не выкурено</string>
-    <string name="money_saved">руб. сэконом...</string>
+    <string name="money_saved">руб. сэконом…</string>
     <string name="time_saved">экономия времени</string>
     <string name="collapse_box">Свернуть</string>
-    <string name="more_details">Подробнее...</string>
+    <string name="more_details">Подробнее…</string>
     <string name="days_">дней</string>
     <string name="hours_">часов</string>
     <string name="minutes_">минут</string>

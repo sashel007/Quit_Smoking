@@ -1,8 +1,6 @@
 package ru.sashel007.quitsmoking.viewmodel
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,12 +17,10 @@ import ru.sashel007.quitsmoking.data.repository.dto.UserDto
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
-@RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class SmokingStatsViewModel @Inject constructor(
     private var repository: MyRepositoryImpl
@@ -44,14 +40,14 @@ class SmokingStatsViewModel @Inject constructor(
     }
 
     private fun firstLoadData() = viewModelScope.launch {
-        val userDto = repository.getUserData(1)
+        val userDto = repository.getUserData()
         calculateSmokingStats(userDto)
     }
 
     private fun loadDataAndLoopCalculation() {
         coroutineScope.launch {
             while (true) {
-                val userDto = repository.getUserData(1)
+                val userDto = repository.getUserData()
                 calculateSmokingStats(userDto)
                 delay(10000)
                 Log.d("SmokingStats_Log", "val userDto = $userDto")

@@ -1,18 +1,13 @@
 package ru.sashel007.quitsmoking.viewmodel
 
 import android.app.Application
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +24,6 @@ import java.time.Instant
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-@RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class AchievementViewModel @Inject constructor(
     application: Application,
@@ -59,7 +53,7 @@ class AchievementViewModel @Inject constructor(
 
     private suspend fun updateAchievementsProgress() {
         try {
-            val user = repository.getUserData(1)
+            val user = repository.getUserData()
             val quitTime = Instant.ofEpochMilli(user.quitTimeInMillisec)
             val currentTime = Instant.now()
             val timeSinceQuit = Duration.between(quitTime, currentTime).toMinutes()

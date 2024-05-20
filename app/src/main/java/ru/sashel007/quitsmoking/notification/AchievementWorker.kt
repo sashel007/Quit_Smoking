@@ -7,9 +7,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -20,8 +18,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import ru.sashel007.quitsmoking.MainActivity
 import ru.sashel007.quitsmoking.R
-import ru.sashel007.quitsmoking.data.db.dao.AchievementDao
-import ru.sashel007.quitsmoking.data.db.dao.UserDao
 import ru.sashel007.quitsmoking.data.repository.MyRepositoryImpl
 import ru.sashel007.quitsmoking.data.repository.dto.mappers.AchievementMapper.toEntity
 import java.time.Duration
@@ -34,11 +30,13 @@ class AchievementWorker @AssistedInject constructor(
     private val repository: MyRepositoryImpl
 ) : CoroutineWorker(context, workerParams) {
 
+    private val notificationTitle = "Так держать!"
+
     override suspend fun doWork(): Result {
         Log.d("Notification_check", "doWork()")
         // Логика проверки достижений и отправки уведомлений
         try {
-            val user = repository.getUserData(1)
+            val user = repository.getUserData()
             val quitTime = Instant.ofEpochMilli(user.quitTimeInMillisec)
             val currentTime = Instant.now()
             val timeSinceQuit = Duration.between(quitTime, currentTime).toMinutes()
@@ -47,7 +45,6 @@ class AchievementWorker @AssistedInject constructor(
 
             for (achievement in currentAchievements) {
                 val achievementDuration = achievement.duration
-                val achievementProgressLine = achievement.progressLine
                 val newProgressLine = ((timeSinceQuit.toFloat() / achievementDuration) * 100).coerceIn(0f, 100f)
                 val isNewlyUnlocked = newProgressLine >= 100 && !achievement.isUnlocked
 
@@ -59,7 +56,7 @@ class AchievementWorker @AssistedInject constructor(
                     val achievementData = updatedAchievement.toEntity()
                     repository.updateAchievement(achievementData)
 
-                    sendNotification("Achievement Worker!", "Новое достижение: ${achievement.name} без сигарет")
+                    sendNotification("Новое достижение: ${achievement.name} без сигарет")
                 }
             }
 
@@ -70,7 +67,7 @@ class AchievementWorker @AssistedInject constructor(
         }
     }
 
-    private fun sendNotification(title: String, message: String) {
+    private fun sendNotification(message: String) {
         val name = context.getString(R.string.notification_channel_name)
         val descriptionText = context.getString(R.string.notification_channel_description)
         val importance = NotificationManager.IMPORTANCE_DEFAULT
@@ -88,8 +85,8 @@ class AchievementWorker @AssistedInject constructor(
             PendingIntent.FLAG_IMMUTABLE)
 
         val builder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(R.drawable.advice_icon)
-            .setContentTitle(title)
+            .setSmallIcon(R.drawable.quit_smoking_logo)
+            .setContentTitle(notificationTitle)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)

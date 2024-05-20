@@ -10,7 +10,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ru.sashel007.quitsmoking.data.repository.MyRepositoryImpl
 import ru.sashel007.quitsmoking.data.repository.dto.UserDto
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,7 +32,7 @@ class UserViewModel @Inject constructor(
 
     private fun loadData() {
         viewModelScope.launch {
-            val loadedData = repository.getUserData(USER_ID)
+            val loadedData = repository.getUserData()
             _userData.value = loadedData
             Log.d("Composable_problem", "from loadData(): ${userData.value}")
         }
@@ -41,14 +40,6 @@ class UserViewModel @Inject constructor(
 
     fun loadDataForFirstMonthStats() {
         loadData()
-    }
-
-    fun insert(userDto: UserDto) = viewModelScope.launch {
-        repository.insertUser(userDto)
-    }
-
-    fun delete(userDto: UserDto) = viewModelScope.launch {
-        repository.deleteUser(userDto)
     }
 
     fun updateQuitTimeInMillisec(quitTime: Long) {

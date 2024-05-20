@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,7 +33,6 @@ import ru.sashel007.quitsmoking.R
 import ru.sashel007.quitsmoking.mainscreen.elements.BackButtonImage
 import ru.sashel007.quitsmoking.ui.theme.AppColors.violette
 import ru.sashel007.quitsmoking.ui.theme.MyTextStyles
-import ru.sashel007.quitsmoking.ui.theme.MyTextStyles.buttonTextStyle
 import ru.sashel007.quitsmoking.ui.theme.MyTextStyles.summaryNumberTextStyle
 import ru.sashel007.quitsmoking.viewmodel.UserViewModel
 
