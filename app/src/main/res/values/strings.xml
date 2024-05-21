@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Quit Smoking</string>
+    <string name="app_name">Бросаем курить!</string>
     <string name="settings">Настройки</string>
     <string name="back_button">Кнопка \"Назад\"</string>
     <string name="quite_smoking">Когда вы бросили курить?</string>
