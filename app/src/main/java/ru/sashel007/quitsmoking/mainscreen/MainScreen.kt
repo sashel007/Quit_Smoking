@@ -154,5 +154,8 @@ fun MainScreen(
             imageSize
         )
     }
+
+    val testA = 1
+    val testB = testA
 }
 
